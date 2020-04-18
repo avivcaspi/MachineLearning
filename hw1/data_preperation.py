@@ -9,7 +9,21 @@ def split_data(df: pd.DataFrame, test_size=0.15, val_size=0.15):
     y = df['Vote']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, stratify=y)
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_size/(1-test_size), stratify=y_train)
-    return X_train.sort_index(), y_train.sort_index(), X_val.sort_index(), y_val.sort_index(), X_test.sort_index(), y_test.sort_index()
+    return X_train.sort_index(), y_train.sort_index().astype(int), X_val.sort_index(), y_val.sort_index().astype(int)\
+        , X_test.sort_index(), y_test.sort_index().astype(int)
+
+
+def split_label_from_data(df: pd.DataFrame) -> tuple:
+    assert 'Vote' in df.columns
+    x = df.loc[:, df.columns != 'Vote']
+    y = df['Vote']
+    return x, y.astype(int)
+
+
+def insert_label_to_data(df: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    df = df.copy()
+    df.insert(0, 'Vote', y)
+    return df
 
 
 # convert all nominal unordered features to onehot
@@ -60,18 +74,33 @@ class Imputation:
         self.numeric_feat = xy_train.keys()[xy_train.dtypes.map(lambda x: x == 'float64')]
         self.nominal_feat = xy_train.keys()[xy_train.dtypes.map(lambda x: x == 'Int64')]
 
-        # self.median = xy_train.loc[xy_train['Vote'].unique(), self.numeric_feat].dropna().median()
-        # self.mode = xy_train[self.nominal_feat].dropna().mode().iloc[0]
+        self.median = xy_train[self.numeric_feat].median(skipna=True)
+        self.mode = xy_train[self.nominal_feat].mode(dropna=True).iloc[0]
 
-    # filling using median for numeric values and most common for nominal values
-    def impute_train(self, data: pd.DataFrame) -> pd.DataFrame:
-        for label in data['Vote'].unique():
-            for feature in data.columns:
-                missing = data.loc[data['Vote'] == label, feature].loc[data.loc[data['Vote'] == label, feature].isnull()]
-                nnan = data.loc[data['Vote'] == label, feature].isnull().sum()
-                values = np.random.choice(data.loc[data['Vote'] == label, feature].dropna(), nnan)
+    # filling missing values in train set by sampling from the set
+    @staticmethod
+    def impute_train(xy_train: pd.DataFrame) -> pd.DataFrame:
+        assert 'Vote' in xy_train.columns  # assert label is in data frame
+        for label in xy_train['Vote'].unique():
+            for feature in xy_train.columns:
+                missing = xy_train.loc[xy_train['Vote'] == label, feature].loc[xy_train.loc[xy_train['Vote'] == label, feature].isnull()]
+                nnan = xy_train.loc[xy_train['Vote'] == label, feature].isnull().sum()
+                values = np.random.choice(xy_train.loc[xy_train['Vote'] == label, feature].dropna(), nnan)
                 missing.loc[:] = values
 
-                data.loc[data['Vote'] == label, feature] = data.loc[data['Vote'] == label, feature].fillna(missing)
+                xy_train.loc[xy_train['Vote'] == label, feature] = xy_train.loc[xy_train['Vote'] == label, feature].fillna(missing)
 
-        return data
+        return xy_train
+
+    # filling missing values in test and val sets by using median and most frequent from train set
+    def impute_test_val(self, x_test: pd.DataFrame, x_val: pd.DataFrame) -> tuple:
+        x_test[self.numeric_feat] = x_test[self.numeric_feat].fillna(self.median)
+        x_test[self.nominal_feat] = x_test[self.nominal_feat].fillna(self.mode)
+
+        x_val[self.numeric_feat] = x_val[self.numeric_feat].fillna(self.median)
+        x_val[self.nominal_feat] = x_val[self.nominal_feat].fillna(self.mode)
+        return x_test, x_val
+
+
+
+

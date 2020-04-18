@@ -3,10 +3,14 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.base import clone
 
-"""
-Returns indices of features selected
-"""
-def SFS(model, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_test: np.ndarray):
+
+# Returns indices of features selected
+def SFS(model, x_train: pd.DataFrame, y_train: pd.Series, x_test: pd.DataFrame, y_test: pd.Series):
+    features_name = x_train.columns
+    x_train = x_train.values
+    y_train = y_train.values
+    x_test = x_test.values
+    y_test = y_test.values
     features = []
     features_left = list(range(x_train.shape[1]))
     best_accuracy = 0
@@ -36,5 +40,7 @@ def SFS(model, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_t
             chosen_feature = np.random.choice(best_feature)
             features.append(chosen_feature)
             features_left.remove(chosen_feature)
-    return sorted(features)
+
+    chosen_features = [features_name[index] for index in sorted(features)]
+    return chosen_features
 
