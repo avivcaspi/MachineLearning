@@ -48,6 +48,7 @@ def convert_to_categorical(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
+# TODO Check if maybe we should change the values to negative instead of removing them
 # removing garbage values
 def remove_negative(data: pd.DataFrame) -> pd.DataFrame:
     numeric_feat = data.keys()[data.dtypes.map(lambda x: x == 'float64')]
