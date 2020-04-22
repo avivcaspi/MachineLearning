@@ -103,5 +103,17 @@ class Imputation:
         return x_test, x_val
 
 
+class Scaling:
+    def __init__(self, xy_train: pd.DataFrame):
+        self.min = xy_train.min(axis=0)
+        self.max = xy_train.max(axis=0)
+        self.mean = xy_train.mean(axis=0)
+        self.std = xy_train.std(axis=0)
 
+    def scale_min_max(self, df: pd.DataFrame, features, min_value, max_value) -> pd.DataFrame:
+        df[features] = (df[features] - self.min[features]) / (self.max[features] - self.min[features]) * (max_value - min_value) + min_value
+        return df
 
+    def normalization(self, df: pd.DataFrame, features):
+        df[features] = (df[features] - self.mean[features]) / self.std[features]
+        return df
