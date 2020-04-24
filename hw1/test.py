@@ -31,5 +31,5 @@ def test_accuracy(x_train, y_train, x_test, y_test):
     acc4 = metrics.accuracy_score(y_test, y4_hat)
     acc5 = metrics.accuracy_score(y_test, y5_hat)
 
-    return {'svm': acc1, 'forest': acc2, 'knn': acc3, 'sgd': acc4, 'bn': acc5}
+    return {'svm': round(acc1, 3), 'forest': round(acc2, 3), 'knn': round(acc3, 3), 'sgd': round(acc4, 3), 'bn': round(acc5, 3)}
 

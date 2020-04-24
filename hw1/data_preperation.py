@@ -30,7 +30,7 @@ def insert_label_to_data(df: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
 def convert_to_onehot(data: pd.DataFrame, onehot_nominal_features) -> pd.DataFrame:
     data_with_dummies = data
     for feature in onehot_nominal_features:
-        dummies = pd.get_dummies(data_with_dummies[feature])
+        dummies = pd.get_dummies(data_with_dummies[feature], prefix=feature)
         data_with_dummies = pd.concat([data_with_dummies, dummies], axis=1)
         data_with_dummies.drop([feature], axis=1, inplace=True)
     return data_with_dummies
