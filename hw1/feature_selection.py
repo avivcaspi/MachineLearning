@@ -6,6 +6,7 @@ from sklearn.base import clone
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 from sklearn.ensemble import ExtraTreesClassifier
 
+
 def selectKBest_features_selection(x: pd.DataFrame, y: pd.DataFrame, k):
     selector = SelectKBest(mutual_info_classif, k=k)
     selector.fit(x, y)
@@ -76,7 +77,6 @@ def SFS(model, x_train: pd.DataFrame, y_train: pd.Series, x_test: pd.DataFrame, 
             chosen_feature = np.random.choice(best_feature)
             features.append(chosen_feature)
             features_left.remove(chosen_feature)
-        print(features)
 
 
     chosen_features = [features_name[index] for index in sorted(features)]

@@ -7,10 +7,10 @@ from sklearn import metrics
 
 
 def test_accuracy(x_train, y_train, x_test, y_test):
-    svm = SVC(gamma='auto')
-    forest = RandomForestClassifier(n_estimators=10)
+    svm = SVC(gamma='auto', random_state=101)
+    forest = RandomForestClassifier(n_estimators=10, random_state=101)
     knn = KNeighborsClassifier()
-    sgd = SGDClassifier()
+    sgd = SGDClassifier(random_state=101)
     bn = GaussianNB()
 
     svm.fit(x_train, y_train)

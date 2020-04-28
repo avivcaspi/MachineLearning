@@ -48,6 +48,12 @@ def convert_to_categorical(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
+def change_binary_values(df: pd.DataFrame, binary_features) -> pd.DataFrame:
+    for feature in binary_features:
+        df.loc[df[feature] == 0, feature] = -1
+    return df
+
+
 # TODO Check if maybe we should change the values to negative instead of removing them
 # removing garbage values
 def remove_negative(data: pd.DataFrame) -> pd.DataFrame:

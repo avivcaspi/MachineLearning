@@ -39,6 +39,7 @@ features - with onehow selectKBest k=14 ['Avg_monthly_expense_on_pets_or_plants'
  'Overall_happiness_score']
 {'svm': 0.891, 'forest': 0.917, 'knn': 0.834, 'sgd': 0.759, 'bn': 0.781}
 
+
 features - with onehot extraTree_feature_selector k = 19 ['Avg_monthly_expense_when_under_age_21'
  'Avg_monthly_expense_on_pets_or_plants' 'Avg_environmental_importance'
  'Married' 'Avg_size_per_room' 'Avg_Residancy_Altitude'
@@ -62,3 +63,96 @@ features - with onehot sfs forest ['Avg_monthly_expense_when_under_age_21',
  'Foreign_Affairs',
  'Military']
  {'svm': 0.881, 'forest': 0.919, 'knn': 0.839, 'sgd': 0.753, 'bn': 0.719}
+
+features - with -1 1 to binary sfs forest ['Avg_monthly_expense_when_under_age_21',
+'Avg_size_per_room', 'Weighted_education_rank',
+'Last_school_grades', 'Number_of_differnt_parties_voted_for',
+'Overall_happiness_score']
+{'svm': 0.885, 'forest': 0.922, 'knn': 0.854, 'sgd': 0.541, 'bn': 0.798}
+
+
+features - with -1 1 to binary rfe 15 - ['Avg_monthly_expense_on_pets_or_plants' 'Avg_environmental_importance'
+ 'Married' 'Avg_size_per_room' 'Avg_Residancy_Altitude'
+ 'Avg_education_importance' 'Avg_Satisfaction_with_previous_vote'
+ 'Avg_monthly_household_cost' 'Phone_minutes_10_years'
+ 'Weighted_education_rank' 'Avg_monthly_income_all_years'
+ 'Last_school_grades' 'Number_of_differnt_parties_voted_for'
+ 'Political_interest_Total_Score' 'Overall_happiness_score']
+{'svm': 0.899, 'forest': 0.931, 'knn': 0.859, 'sgd': 0.763, 'bn': 0.767}
+
+
+features - with -1 0 1 and -1 1 binary  selectkbest (k=14) ['Avg_monthly_expense_when_under_age_21'
+ 'Avg_monthly_expense_on_pets_or_plants' 'Avg_environmental_importance'
+ 'Avg_size_per_room' 'Avg_Residancy_Altitude' 'Avg_education_importance'
+ 'Avg_Satisfaction_with_previous_vote' 'Avg_monthly_household_cost'
+ 'Phone_minutes_10_years' 'Weighted_education_rank' 'Last_school_grades'
+ 'Number_of_differnt_parties_voted_for' 'Political_interest_Total_Score'
+ 'Overall_happiness_score']
+{'svm': 0.891, 'forest': 0.905, 'knn': 0.845, 'sgd': 0.755, 'bn': 0.754}
+
+
+features - with -1 0 1 and -1 1 binary extratree selcetion (k=15) ['Avg_environmental_importance' 'Married' 'Avg_size_per_room'
+ 'Avg_Residancy_Altitude' 'Avg_education_importance'
+ 'Avg_Satisfaction_with_previous_vote' 'Avg_monthly_household_cost'
+ 'Phone_minutes_10_years' 'Weighted_education_rank'
+ 'Avg_monthly_income_all_years' 'Last_school_grades'
+ 'Number_of_differnt_parties_voted_for' 'Political_interest_Total_Score'
+ 'Overall_happiness_score' 'Most_Important_Issue_Other']
+{'svm': 0.889, 'forest': 0.907, 'knn': 0.859, 'sgd': 0.782, 'bn': 0.736}
+
+
+featrues - with -1 0 1 and -1 1 binary sfs forest
+ ['Avg_monthly_expense_on_pets_or_plants', 'Avg_environmental_importance',
+ 'Avg_size_per_room', 'Phone_minutes_10_years', 'Weighted_education_rank',
+ 'Last_school_grades', 'Number_of_differnt_parties_voted_for', 'Overall_happiness_score',
+  'Main_transportation_Car', 'Main_transportation_Foot_or_bicycle']
+{'svm': 0.878, 'forest': 0.914, 'knn': 0.831, 'sgd': 0.667, 'bn': 0.772}
+
+
+features - with -1 0 1 and -1 1 binary rfe forest Features number: 10, features: [ 1  6 13 15 22 24 27 28 29 33]
+{'svm': 0.889, 'forest': 0.913, 'knn': 0.852, 'sgd': 0.748, 'bn': 0.773}
+Features number: 11, features: [ 1  6 13 15 19 22 24 27 28 29 33]
+{'svm': 0.892, 'forest': 0.912, 'knn': 0.837, 'sgd': 0.757, 'bn': 0.78}
+
+
+features - with -1 0 1 and -1 1 binary and nominal with 3 values selectkbest k=14
+['Avg_monthly_expense_when_under_age_21'
+ 'Avg_monthly_expense_on_pets_or_plants' 'Avg_environmental_importance'
+ 'Avg_size_per_room' 'Avg_Residancy_Altitude' 'Avg_education_importance'
+ 'Avg_Satisfaction_with_previous_vote' 'Avg_monthly_household_cost'
+ 'Phone_minutes_10_years' 'Weighted_education_rank' 'Last_school_grades'
+ 'Number_of_differnt_parties_voted_for' 'Political_interest_Total_Score'
+ 'Overall_happiness_score']
+{'svm': 0.896, 'forest': 0.911, 'knn': 0.855, 'sgd': 0.747, 'bn': 0.771}
+
+features - with -1 0 1 and -1 1 binary and nominal with 3 values extra tree selector
+['Avg_environmental_importance' 'Married' 'Avg_size_per_room'
+ 'Avg_Residancy_Altitude' 'Avg_education_importance'
+ 'Avg_Satisfaction_with_previous_vote' 'Avg_monthly_household_cost'
+ 'Phone_minutes_10_years' 'Weighted_education_rank'
+ 'Avg_monthly_income_all_years' 'Last_school_grades'
+ 'Number_of_differnt_parties_voted_for' 'Political_interest_Total_Score'
+ 'Overall_happiness_score' 'Most_Important_Issue_Other']
+{'svm': 0.881, 'forest': 0.911, 'knn': 0.86, 'sgd': 0.781, 'bn': 0.734}
+
+
+features - with -1 0 1 and -1 1 binary and nominal with 3 values sfs forest
+['Avg_Residancy_Altitude', 'Avg_education_importance',
+ 'Weighted_education_rank', 'Avg_monthly_income_all_years',
+ 'Last_school_grades', 'Number_of_differnt_parties_voted_for',
+ 'Overall_happiness_score']
+{'svm': 0.88, 'forest': 0.919, 'knn': 0.845, 'sgd': 0.539, 'bn': 0.785}
+
+features - with -1 0 1 and -1 1 binary and nominal with 3 values rfe forest
+Features number: 15, features: [ 1  4  6 13 15 18 19 20 22 24 26 27 28 29 33]
+{'svm': 0.893, 'forest': 0.921, 'knn': 0.843, 'sgd': 0.759, 'bn': 0.768}
+Features number: 17, features: [ 1  2  4  6 12 13 15 18 19 20 22 24 26 27 28 29 33]
+['Avg_monthly_expense_when_under_age_21', 'Avg_lottary_expanses',
+       'Avg_monthly_expense_on_pets_or_plants', 'Avg_environmental_importance',
+       'Yearly_IncomeK', 'Avg_size_per_room', 'Avg_Residancy_Altitude',
+       'Avg_education_importance', 'Avg_Satisfaction_with_previous_vote',
+       'Avg_monthly_household_cost', 'Phone_minutes_10_years',
+       'Weighted_education_rank', 'Avg_monthly_income_all_years',
+       'Last_school_grades', 'Number_of_differnt_parties_voted_for',
+       'Political_interest_Total_Score', 'Overall_happiness_score']
+{'svm': 0.894, 'forest': 0.925, 'knn': 0.847, 'sgd': 0.771, 'bn': 0.757}

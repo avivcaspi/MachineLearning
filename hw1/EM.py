@@ -1,19 +1,19 @@
 import numpy as np
-from sklearn.mixture import GaussianMixture
 from scipy.stats import multivariate_normal
 import copy
 
 
 class EM:
-    def __init__(self, n_components=1, num_iterations=1):
+    def __init__(self, n_components=1, max_iter=100):
         self.n_components = n_components
         self.params = dict()
         for i in range(self.n_components):
             self.params[i] = dict()
-        self.num_iterations = num_iterations
         self.features_num = 0
         self.params_results = []
         self.eps = 0
+        self.max_iter = max_iter
+        self.converged = False
 
     def fit(self, X):
         self.features_num = len(X[0])
@@ -30,7 +30,13 @@ class EM:
             self.params[i]['pi'] = 1 / self.n_components
 
         self.params_results.append(copy.deepcopy(self.params))
-        for iteration in range(self.num_iterations):
+        last_log_likelihood = None
+        log_likelihood = np.log(np.sum([self.params[c]['pi'] * multivariate_normal(self.params[c]['mean'], self.params[c]['cov']).pdf(X) for c in
+                                                  range(self.n_components)]))
+        iter = 0
+        while last_log_likelihood is None or (log_likelihood > last_log_likelihood and iter < self.max_iter):
+            iter += 1
+            last_log_likelihood = log_likelihood
             # E step - for each sample we compute the probability it belongs to each component
             r = np.zeros((num_samples, self.n_components))
 
@@ -53,6 +59,12 @@ class EM:
                                                             X - self.params[component]['mean'].reshape(1, -1))).T,
                                                        X - self.params[component]['mean'].reshape(1, -1)) + self.eps
             self.params_results.append(copy.deepcopy(self.params))
+            log_likelihood = np.log(np.sum([self.params[c]['pi'] * multivariate_normal(self.params[c]['mean'], self.params[c]['cov']).pdf(X) for c in
+                                                  range(self.n_components)]))
+
+        if iter < self.max_iter:
+            self.converged = True
+        print(f'Converged = {self.converged}')
         return self.params_results
 
     # When given samples will predict the probability that each sample belongs to each component
@@ -69,3 +81,9 @@ class EM:
             r[:, component] = x_prob / normalize_term
 
         return r
+
+    def means_(self):
+        return [list(v) for c in range(self.n_components) for k, v in self.params[c].items() if k == 'mean']
+
+    def covs_(self):
+        return [v.tolist() for c in range(self.n_components) for k, v in self.params[c].items() if k == 'cov']
