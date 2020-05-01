@@ -156,3 +156,36 @@ Features number: 17, features: [ 1  2  4  6 12 13 15 18 19 20 22 24 26 27 28 29 
        'Last_school_grades', 'Number_of_differnt_parties_voted_for',
        'Political_interest_Total_Score', 'Overall_happiness_score']
 {'svm': 0.894, 'forest': 0.925, 'knn': 0.847, 'sgd': 0.771, 'bn': 0.757}
+
+
+features - relief 2000 iter 18 features ['Most_Important_Issue_Other' 'Most_Important_Issue_Financial'
+ 'Most_Important_Issue_Foreign_Affairs' 'Occupation_Student_or_Unemployed'
+ 'Most_Important_Issue_Education' 'Most_Important_Issue_Military'
+ 'Occupation_Public_Sector' 'Number_of_differnt_parties_voted_for'
+ 'Overall_happiness_score' 'Political_interest_Total_Score'
+ 'Avg_monthly_expense_on_pets_or_plants' 'Avg_size_per_room'
+ 'Weighted_education_rank' 'Avg_education_importance'
+ 'Avg_lottary_expanses' 'Last_school_grades' 'Avg_Residancy_Altitude']
+{'svm': 0.877, 'forest': 0.905, 'knn': 0.839, 'sgd': 0.783, 'bn': 0.798}
+
+relief without one hot features 2000 - 18 ['Most_Important_Issue_Education' 'Overall_happiness_score'
+ 'Number_of_differnt_parties_voted_for' 'Political_interest_Total_Score'
+ 'Avg_monthly_expense_on_pets_or_plants' 'Avg_size_per_room'
+ 'Avg_lottary_expanses' 'Last_school_grades' 'Avg_education_importance'
+ 'Weighted_education_rank' 'Avg_Residancy_Altitude'
+ 'Phone_minutes_10_years' 'Avg_Satisfaction_with_previous_vote'
+ 'Avg_environmental_importance' 'Avg_monthly_household_cost'
+ 'Avg_monthly_expense_when_under_age_21' 'Avg_monthly_income_all_years']
+{'svm': 0.885, 'forest': 0.911, 'knn': 0.836, 'sgd': 0.75, 'bn': 0.716}
+
+
+selected features = ['Avg_Residancy_Altitude',
+ 'Avg_Satisfaction_with_previous_vote',
+ 'Avg_education_importance',
+ 'Avg_environmental_importance',
+ 'Avg_monthly_household_cost',
+ 'Avg_size_per_room',
+ 'Number_of_differnt_parties_voted_for',
+ 'Overall_happiness_score',
+ 'Phone_minutes_10_years',
+ 'Political_interest_Total_Score' 'Last_school_grades']

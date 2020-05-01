@@ -78,7 +78,6 @@ def SFS(model, x_train: pd.DataFrame, y_train: pd.Series, x_test: pd.DataFrame, 
             features.append(chosen_feature)
             features_left.remove(chosen_feature)
 
-
     chosen_features = [features_name[index] for index in sorted(features)]
     return chosen_features
 

@@ -1,17 +1,9 @@
 
 import pandas as pd
 import numpy as np
-import math
 
 
-def distance(x1, x2, len):
-    return 10
-    val = 0
-    for i in range(1,len):
-        val += (x1.iloc[i] - x2.iloc[i])**2
-    return math.sqrt(val)
-
-def relief(data:pd.DataFrame, iterations, threshold):
+def relief(data: pd.DataFrame, iterations, k):
 
     features = data.columns.values
     weights_array = np.zeros(features.shape[0])
@@ -22,15 +14,14 @@ def relief(data:pd.DataFrame, iterations, threshold):
         random_label = random_instance.iloc[0][0]
         df_miss = new_data[new_data['Vote'] != random_label]
         df_hit = new_data[new_data['Vote'] == random_label]
-        a=distance(random_instance.iloc[0],df_miss.iloc[2],features.shape[0])
-        miss = df_miss.apply(lambda row: distance(row,random_instance.iloc[0],features.shape[0]),axis=1)#.idxmin()
-        hit = df_hit.apply(lambda row: distance(row,random_instance.iloc[0],features.shape[0]),axis=1)#.idxmin()
+        min_miss = np.linalg.norm((df_miss.values[:, 1:] - random_instance.values[:, 1:]).astype(float), ord=2, axis=1).argmin()
+        min_hit = np.linalg.norm((df_hit.values[:, 1:] - random_instance.values[:, 1:]).astype(float), ord=2, axis=1).argmin()
+        for i in range(1, features.shape[0]):
+            a = (random_instance.iloc[0][i]-df_miss.iloc[min_miss][i])**2
+            b = (random_instance.iloc[0][i]-df_hit.iloc[min_hit][i])**2
+            weights_array[i] += a-b
+        iterations -= 1
 
-        for i in range(1,features.shape[0]):
-            weights_array[i] += (random_instance.iloc[0][i]-df_miss.iloc[miss][i])**2 -(random_instance.iloc[0][i]-df_hit.iloc[hit][i])**2
-
-        iterations-=1
-
-    return features[weights_array > threshold]
+    return features[weights_array.argsort()[:-k:-1]]
 
 
