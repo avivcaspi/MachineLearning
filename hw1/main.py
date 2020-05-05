@@ -105,6 +105,7 @@ if __name__ == '__main__':
     # feature selection
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
+    X_test, y_test = split_label_from_data(XY_test)
     if run_feature_selection:  # This will take long time to run
         # filter methods
         # ----------selectKBest------------
@@ -116,7 +117,7 @@ if __name__ == '__main__':
 
         # ----------relief------------
         # We run the it without the one hot features
-        features = relief(XY_train.iloc[:, :35], 1000, 18)
+        features = relief(XY_train.iloc[:, :35], 2000, 18)
         # print(features)
         # print(test_accuracy(X_train[features], y_train, X_val[features], y_val))
         relief_features = features
@@ -146,7 +147,7 @@ if __name__ == '__main__':
         union_acc = test_accuracy(X_train[union], y_train, X_val[union], y_val)
 
     # final features we chose after evaluating the union/ intersection/ and each feature selection method results
-    final_features = ['Yearly_IncomeK', 'Last_school_grades', 'Avg_education_importance', 'Avg_monthly_expense_on_pets_or_plants', 'Avg_Residancy_Altitude', 'Avg_Satisfaction_with_previous_vote', 'Weighted_education_rank', 'Avg_size_per_room', 'Most_Important_Issue_Foreign_Affairs', 'Number_of_differnt_parties_voted_for', 'Occupation_Services_or_Retail', 'Avg_environmental_importance', 'Married', 'Overall_happiness_score']
+    final_features = ['Yearly_IncomeK', 'Last_school_grades', 'Avg_education_importance', 'Avg_monthly_expense_on_pets_or_plants', 'Avg_Residancy_Altitude', 'Most_Important_Issue_Military', 'Avg_Satisfaction_with_previous_vote', 'Avg_size_per_room', 'Number_of_differnt_parties_voted_for', 'Avg_monthly_household_cost', 'Phone_minutes_10_years', 'Most_Important_Issue_Other', 'Avg_environmental_importance', 'Political_interest_Total_Score', 'Overall_happiness_score']
     print(test_accuracy(X_train[final_features], y_train, X_val[final_features], y_val))
 
 
