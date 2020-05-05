@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.stats import multivariate_normal
 import copy
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
 
 
 class EM:
@@ -87,3 +89,49 @@ class EM:
 
     def covs_(self):
         return [v.tolist() for c in range(self.n_components) for k, v in self.params[c].items() if k == 'cov']
+
+
+if __name__ == '__main__':
+    n_components = 2
+    n_samples = 1000
+
+    # Create data set that was sampled from n normal distributions
+    X, Y = make_blobs(cluster_std=0.5, random_state=20, n_samples=n_samples, centers=n_components)
+
+    X = np.dot(X, np.random.RandomState(0).randn(2, 2))
+
+    x, y = np.meshgrid(np.sort(X[:, 0]), np.sort(X[:, 1]))
+    XY = np.array([x.flatten(), y.flatten()]).T
+
+    fig, (ax0, ax1) = plt.subplots(2, figsize=(10, 10))
+
+    ax0.scatter(X[:, 0], X[:, 1])
+    ax0.set_title('Initial state')
+    EM = EM(n_components=n_components, max_iter=100)
+    res = EM.fit(X)
+
+    print(f'means = {EM.means_()}')
+    print(f'covs = {EM.covs_()}')
+
+    for c in res[0].values():
+        # Plot each distribution
+        multi_normal = multivariate_normal(mean=c['mean'], cov=c['cov'])
+        ax0.contour(np.sort(X[:, 0]), np.sort(X[:, 1]), multi_normal.pdf(XY).reshape(len(X), len(X)), colors='green',
+                    alpha=0.3)
+        ax0.scatter(c['mean'][0], c['mean'][1], c='red', zorder=10, s=100)
+
+    ax1.scatter(X[:, 0], X[:, 1])
+    # Mark 3 points for future prediction
+    ax1.scatter(X[:3, 0], X[:3, 1], c='purple')
+
+    ax1.set_title('Final state')
+    for c in res[-1].values():
+        multi_normal = multivariate_normal(mean=c['mean'], cov=c['cov'])
+        ax1.contour(np.sort(X[:, 0]), np.sort(X[:, 1]), multi_normal.pdf(XY).reshape(len(X), len(X)), colors='green',
+                    alpha=0.3)
+        ax1.scatter(c['mean'][0], c['mean'][1], c='red', zorder=10, s=100)
+
+    plt.show()
+
+    # predict 3 points origin distribution
+    print(f'Prediction: \n{EM.predict(X[:3])}')
