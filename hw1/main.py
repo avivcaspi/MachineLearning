@@ -2,7 +2,6 @@ from data_preperation import *
 from feature_selection import *
 from test import test_accuracy
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import RFE
 from relief import *
 
@@ -37,8 +36,8 @@ numerical_features = discrete_features + continuous_features
 total_nominal_features = nominal_features + binary_features
 
 if __name__ == '__main__':
-    run_feature_selection = False
-    load = True
+    run_feature_selection = False  # if load is False this will run feature selection as well as data transformation
+    load = True     # Will load the transformed csv and won`t run feature selection
 
     if load:
         XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
@@ -51,9 +50,9 @@ if __name__ == '__main__':
 
         # Split data
         train_indices, val_indices, test_indices = split_data(df, test_size=0.15, val_size=0.15)
-        df.iloc[train_indices, :].to_csv('train_original.csv')
-        df.iloc[val_indices, :].to_csv('val_original.csv')
-        df.iloc[test_indices, :].to_csv('test_original.csv')
+        df.loc[train_indices, :].to_csv('train_original.csv')
+        df.loc[val_indices, :].to_csv('val_original.csv')
+        df.loc[test_indices, :].to_csv('test_original.csv')
 
         # Convert nominal features to onehot
         df = convert_to_onehot(df, onehot_nominal_features)
@@ -73,9 +72,9 @@ if __name__ == '__main__':
         df.loc[df['Age_group'] == 2, 'Age_group'] = -1
 
         # Create sets
-        XY_train = df.iloc[train_indices, :]
-        XY_val = df.iloc[val_indices, :]
-        XY_test = df.iloc[test_indices, :]
+        XY_train = df.loc[train_indices, :]
+        XY_val = df.loc[val_indices, :]
+        XY_test = df.loc[test_indices, :]
 
         # Remove outlier from train set
         print('Outlier removing')
@@ -106,7 +105,7 @@ if __name__ == '__main__':
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
     X_test, y_test = split_label_from_data(XY_test)
-    if run_feature_selection:  # This will take long time to run
+    if run_feature_selection and not load:  # This will take long time to run
         # filter methods
         # ----------selectKBest------------
         # We found that 18 gives the best result
@@ -149,6 +148,9 @@ if __name__ == '__main__':
     # final features we chose after evaluating the union/ intersection/ and each feature selection method results
     final_features = ['Yearly_IncomeK', 'Last_school_grades', 'Avg_education_importance', 'Avg_monthly_expense_on_pets_or_plants', 'Avg_Residancy_Altitude', 'Most_Important_Issue_Military', 'Avg_Satisfaction_with_previous_vote', 'Avg_size_per_room', 'Number_of_differnt_parties_voted_for', 'Avg_monthly_household_cost', 'Phone_minutes_10_years', 'Most_Important_Issue_Other', 'Avg_environmental_importance', 'Political_interest_Total_Score', 'Overall_happiness_score']
     print(test_accuracy(X_train[final_features], y_train, X_val[final_features], y_val))
+    # XY_train[['Vote'] + final_features].to_csv('train_transformed.csv')
+    # XY_val[['Vote'] + final_features].to_csv('val_transformed.csv')
+    # XY_test[['Vote'] + final_features].to_csv('test_transformed.csv')
 
 
 

@@ -11,7 +11,9 @@ def split_data(df: pd.DataFrame, test_size=0.15, val_size=0.15):
     train_val_indices, test_indices = next(sss.split(X, y))
     sss.test_size = val_size / (1 - test_size)
     train_indices, val_indices = next(sss.split(X.iloc[train_val_indices, :], y[train_val_indices]))
-
+    test_indices = df.iloc[sorted(test_indices), :].index
+    train_indices = df.iloc[train_val_indices, :].iloc[sorted(train_indices), :].index
+    val_indices = df.iloc[train_val_indices, :].iloc[sorted(val_indices), :].index
     return sorted(train_indices), sorted(val_indices), sorted(test_indices)
 
 
