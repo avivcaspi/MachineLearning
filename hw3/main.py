@@ -5,51 +5,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import cross_val_score
-
-
-def temp():
-    """kf = KFold(n_splits=n_splits)
-
-        X_train = X_train.to_numpy()
-        y_train = y_train.to_numpy()
-        # finding best k for KNN classifier and n_estimators for RandomForestClassifier
-        knn_results = dict()
-        forest_results = dict()
-        for k, n_estimators in zip(range(1, 7), range(40, 160, 20)):
-            knn_accuracy = 0
-            forest_accuracy = 0
-            for i, (train_index, test_index) in enumerate(kf.split(X_train)):
-                KNN_classifier = KNeighborsClassifier(n_neighbors=k)
-                KNN_classifier.fit(X_train[train_index], y_train[train_index])
-                y_pred = KNN_classifier.predict(X_train[test_index])
-                knn_accuracy += accuracy_score(y_train[test_index], y_pred)
-
-                forest = RandomForestClassifier(n_estimators=n_estimators, min_samples_split=20, random_state=1)
-                forest.fit(X_train[train_index], y_train[train_index])
-                y_pred = forest.predict(X_train[test_index])
-                forest_accuracy += accuracy_score(y_train[test_index], y_pred)
-
-            knn_accuracy /= n_splits
-            knn_results[k] = knn_accuracy
-            forest_accuracy /= n_splits
-            forest_results[n_estimators] = forest_accuracy
-            print(f'k = {k} knn accuracy = {knn_accuracy}')
-            print(f'n_estimators = {n_estimators} forest accuracy = {forest_accuracy}')
-        best_k = max(knn_results, key=knn_results.get)
-        best_n_estimators = max(forest_results, key=forest_results.get)
-        print(f'best k is {best_k}')
-        print(f'best n_estimators is {best_n_estimators}')
-        # TODO run CV to find min sample split
-        best_knn = KNeighborsClassifier(best_k)
-        best_forest = RandomForestClassifier(best_n_estimators, min_samples_split=20, random_state=1)
-        best_knn.fit(X_train, y_train)
-        best_forest.fit(X_train, y_train)
-        return best_knn, best_forest"""
+import matplotlib.pyplot as plt
 
 
 # Receive dict with classifiers and params with optional values, and finds the best combination of params values for
@@ -123,22 +82,63 @@ def train_best_classifier(XY_train: pd.DataFrame, classifier, params):
     return clf
 
 
+def pick_best_classifier(results):
+    best_clf = max(results, key=results.get)
+    return best_clf
+
+
 def main():
+    import time
+
+    start = time.time()
+    automate_model_selection = False
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
     XY_test = pd.read_csv('test_transformed.csv', index_col=0, header=0)
-    classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 100, 20)),
-                                                        'min_samples_split': list(range(2, 10, 4)),
+    classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 30)),
+                                                        'min_samples_split': list(range(2, 20, 2)),
                                                         'random_state': 2},
-                               KNeighborsClassifier: {'n_neighbors': list(range(1, 7))},
+                               KNeighborsClassifier: {'n_neighbors': list(range(1, 10))},
                                SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
-                               DecisionTreeClassifier: {'min_samples_split': list(range(2, 10, 4))},
-                               SGDClassifier: {'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron']},
+                               DecisionTreeClassifier: {'min_samples_split': list(range(2, 20, 2))},
                                GaussianNB: {}}
     classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
-    results = train_and_evaluate(classifiers_params_dict, XY_train, XY_val)
-    # TODO merge train and val data sets and use train best classifier to train and then predict what they asked in section 6
-    print(results, classifiers_params_dict)
+    print(f'Classifiers best params : \n{classifiers_params_dict}')
+
+    results = train_and_evaluate(classifiers_params_dict, XY_train, XY_val)  # used to pick best model manually
+
+    best_clf = pick_best_classifier(results) if automate_model_selection else RandomForestClassifier
+
+    XY_train_new = pd.concat([XY_train, XY_val])
+    clf = train_best_classifier(XY_train_new, best_clf, classifiers_params_dict[best_clf])
+
+    # First prediction
+    X_test, y_test = split_label_from_data(XY_test)
+    y_pred = clf.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_mat = confusion_matrix(y_test, y_pred)
+
+    print(f'Test Error : {1 - accuracy}')
+    print(f'Confusion Matrix : \n{conf_mat}')
+
+    division_of_voters = {party: list(y_pred).count(party) for party in set(y_pred)}
+    party_with_majority = max(division_of_voters, key=division_of_voters.get)
+
+    print(f'Party that will win majority of votes (in relation to Test set) : {party_with_majority}')
+
+    n_voters = len(X_test)
+    division_of_voters.update((key, round(value * 100 / n_voters, 3)) for key, value in division_of_voters.items())
+
+    print(f'Division of voters : \n{division_of_voters}')
+    bins = np.linspace(0, 12, 26)
+
+    plt.hist([y_test, y_pred], bins, label=['Real votes', 'Prediction'])
+    plt.xticks(range(0, 13, 1))
+    plt.legend(loc='upper right')
+    plt.show()
+
+    end = time.time()
+    print(f'Time it took : {end - start}')
 
 
 if __name__ == '__main__':
