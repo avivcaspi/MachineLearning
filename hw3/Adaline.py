@@ -5,6 +5,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from matplotlib.colors import ListedColormap
+from sklearn.datasets import make_classification
 
 
 class Adaline:
@@ -12,18 +13,21 @@ class Adaline:
         self.lr = lr
         self.num_iter = num_iter
         self.losses = []
+        self.train_accuracy = []
         self.weights = None
 
     def fit(self, X, y):
         self.weights = np.zeros(X.shape[1] + 1)
-        X = bias_trick(X)
+        X_with_bias = bias_trick(X)
         for i in range(self.num_iter):
-            output = X @ self.weights
+            output = X_with_bias @ self.weights
             loss = 0.5 * ((y - output) ** 2).sum()
-            grad = X.T @ (y - output)
+            grad = X_with_bias.T @ (y - output)
             self.weights += self.lr * grad
 
             self.losses.append(loss)
+            train_accuracy = evaluate_performance(self, X, y)
+            self.train_accuracy.append(train_accuracy)
 
     def predict(self, X):
         X = bias_trick(X)
@@ -31,6 +35,12 @@ class Adaline:
         res[res > 0] = 1
         res[res < 0] = -1
         return res
+
+
+def evaluate_performance(clf, X, y):
+    y_pred_train = clf.predict(X)
+    train_accuracy = accuracy_score(y, y_pred_train)
+    return train_accuracy
 
 
 def bias_trick(X):
@@ -41,7 +51,7 @@ def bias_trick(X):
 def plot_decision_regions(X, y, classifier, resolution=0.02):
     # setup marker generator and color map
     markers = ('s', 'x', 'o', '^', 'v')
-    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+    colors = ('blue', 'red', 'lightgreen', 'gray', 'cyan')
     cmap = ListedColormap(colors[:len(np.unique(y))])
 
     # plot the decision surface
@@ -62,51 +72,194 @@ def plot_decision_regions(X, y, classifier, resolution=0.02):
                     marker=markers[idx], label=cl)
 
 
-if __name__ == "__main__":
+def load_iris_data_set():
     iris = datasets.load_iris()
     X_iris = iris.data
     y_iris = iris.target
-    y_iris[y_iris == 2] = 1
-    y_iris[y_iris == 0] = -1
-    X_iris = X_iris[:, [0,2]]
-    # X_iris[:, 0] = (X_iris[:,0] - X_iris[:,0].mean() )/X_iris[:,0].std()
-    # X_iris[:, 1] = (X_iris[:, 1] - X_iris[:, 1].mean()) / X_iris[:, 1].std()
 
-    digits = datasets.load_digits(2)
+    # Scaling
+    iris_mean = np.mean(X_iris, axis=0)
+    iris_std = np.std(X_iris, axis=0) + 1e-5
+    X_iris = (X_iris - iris_mean) / iris_std
+
+    return X_iris, y_iris
+
+
+def load_digits_data_set():
+    digits = datasets.load_digits()
     X_digits = digits.data
     y_digits = digits.target
-    y_digits[y_digits == 0] = -1
-    X_train, X_test, y_train, y_test = train_test_split(X_iris, y_iris, test_size=0.15, shuffle=True)
 
-    clf = Adaline(lr=1e-4, num_iter=1000)
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f'iris accuracy : {accuracy}')
+    # Scaling
+    digits_mean = np.mean(X_digits, axis=0)
+    digits_std = np.std(X_digits, axis=0) + 1e-5
+    X_digits = (X_digits - digits_mean) / digits_std
 
-    perceptron = Perceptron()
-    perceptron.fit(X_train, y_train)
-    y_pred = perceptron.predict(X_test)
-    perc_acc = accuracy_score(y_test, y_pred)
-    print(f'perceptron accuracy : {perc_acc}')
+    return X_digits, y_digits
 
-    plot_decision_regions(X_iris, y_iris, classifier=clf)
 
-    plt.title('Adaptive Linear Neuron - Gradient Descent')
-    plt.xlabel('sepal length')
-    plt.ylabel('petal length')
-    plt.legend(loc='upper left')
+def one_vs_all(y, true_class):
+    y_new = np.zeros_like(y)
+    y_new[y != true_class] = -1
+    y_new[y == true_class] = 1
+    return y_new
+
+
+def train_and_evaluate_adaline(X, y, lr, num_iter):
+    num_of_classes = len(set(y))
+    results = dict()
+    for current_class in range(num_of_classes):
+        if num_of_classes == 2 and current_class == 1:
+            continue
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True)
+        y_train = one_vs_all(y_train, current_class)
+        y_test = one_vs_all(y_test, current_class)
+        clf = Adaline(lr=lr, num_iter=num_iter)
+        clf.fit(X_train, y_train)
+
+        test_accuracy = evaluate_performance(clf, X_test, y_test)
+        results[current_class] = {'train_accuracy': clf.train_accuracy, 'test_accuracy': test_accuracy, 'losses': clf.losses}
+    return results
+
+
+def train_and_evaluate_perceptron(X, y, lr, max_iter):
+    num_of_classes = len(set(y))
+    results = dict()
+    for current_class in range(num_of_classes):
+        if num_of_classes == 2 and current_class == 1:
+            continue
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True)
+        y_train = one_vs_all(y_train, current_class)
+        y_test = one_vs_all(y_test, current_class)
+
+        clf = Perceptron(alpha=lr, max_iter=max_iter, random_state=2)
+        clf.fit(X_train, y_train)
+        train_accuracy = evaluate_performance(clf, X_train, y_train)
+        test_accuracy = evaluate_performance(clf, X_test, y_test)
+        results[current_class] = {'train_accuracy': train_accuracy, 'test_accuracy': test_accuracy}
+    return results
+
+
+def plot_graphs(results, dataset_name):
+    for i in range(len(results)):
+        plt.plot(range(1, len(results[i]['train_accuracy']) + 1), results[i]['train_accuracy'])
+        plt.legend(['train'], loc='lower right')
+        plt.xlabel('Epochs')
+        plt.ylabel('accuracy')
+        plt.title(f'{dataset_name} Dataset - type {i} vs all')
+        plt.show()
+
+        if len(results[i]['losses']) > 0:
+            plt.plot(range(1, len(results[i]['losses']) + 1), results[i]['losses'], marker='o')
+            plt.xlabel('Epochs')
+            plt.ylabel('Sum-squared-error')
+            plt.title(f'{dataset_name} Dataset - type {i} vs all')
+            plt.show()
+
+
+def compare_algorithms(X, y, lr, num_iter, dataset_name, show_graphs):
+    results = train_and_evaluate_adaline(X, y, lr, num_iter)
+    num_of_classes = len(set(y))
+    for i in range(num_of_classes):
+        if num_of_classes == 2 and i == 1:
+            continue
+        print(f'{dataset_name} - Adaline type {i} vs all train accuracy = {results[i]["train_accuracy"][-1]},'
+              f' test accuracy = {results[i]["test_accuracy"]}')
+
+    if show_graphs:
+        plot_graphs(results, dataset_name)
+
+    results = train_and_evaluate_perceptron(X, y, lr=lr, max_iter=num_iter)
+    for i in range(num_of_classes):
+        if num_of_classes == 2 and i == 1:
+            continue
+        print(f'{dataset_name} - Perceptron type {i} vs all train accuracy = {results[i]["train_accuracy"]},'
+              f' test accuracy = {results[i]["test_accuracy"]}')
+
+
+def create_dataset_better_for_adaline():
+    # Non-linear separable dataset
+    X = np.random.randn(1000, 2)
+    y = np.zeros(X.shape[0])
+    y[X[:, 1] > ((X[:, 0]) ** 2)] = 1
+    '''plt.title('Dataset separable by y=x^2')
+    plt.plot(X[y == 0, 0], X[y == 0, 1], 'r.')
+    plt.plot(X[y == 1, 0], X[y == 1, 1], 'b.')
+    plt.show()'''
+    return X, y
+
+
+def create_dataset_better_for_perceptron():
+    # linear separable dataset
+    X = np.random.randn(1000, 2)
+    y = np.zeros(X.shape[0])
+    X[X[:, 1] > 0, 1] += 5
+    y[X[:, 1] > 0] = 1
+    '''plt.title('Dataset separable by y=2')
+    plt.plot(X[y == 0, 0], X[y == 0, 1], 'r.')
+    plt.plot(X[y == 1, 0], X[y == 1, 1], 'b.')
+    plt.show()'''
+    return X, y
+
+
+def sklearn_comparison(X,y, lr, num_iter):
+    heldout = [0.95, 0.90, 0.75, 0.50, 0.1]
+    rounds = 20
+
+    classifiers = [
+        ("Adaline", Adaline(lr=lr, num_iter=num_iter)),
+        ("Perceptron", Perceptron(alpha=lr, max_iter=num_iter)),
+    ]
+
+    xx = 1. - np.array(heldout)
+
+    for name, clf in classifiers:
+        print("training %s" % name)
+        rng = np.random.RandomState(42)
+        yy = []
+        for i in heldout:
+            yy_ = []
+            for r in range(rounds):
+                X_train, X_test, y_train, y_test = \
+                    train_test_split(X, y, test_size=i, random_state=rng, stratify=y)
+                y_train = one_vs_all(y_train, 1)
+                y_test = one_vs_all(y_test, 1)
+
+                clf.fit(X_train, y_train)
+                y_pred = clf.predict(X_test)
+                yy_.append(1 - np.mean(y_pred == y_test))
+            yy.append(np.mean(yy_))
+        plt.plot(xx, yy, label=name)
+
+    plt.legend(loc="upper right")
+    plt.xlabel("Proportion train")
+    plt.ylabel("Test Error Rate")
     plt.show()
 
-    plot_decision_regions(X_iris, y_iris, classifier=perceptron)
 
-    plt.title('Perceptron - Gradient Descent')
-    plt.xlabel('sepal length')
-    plt.ylabel('petal length')
-    plt.legend(loc='upper left')
-    plt.show()
+def main():
+    # TODO find how many epochs it takes to converge
+    # TODO change the comaprison function to be same as sklrean
+    X_iris, y_iris = load_iris_data_set()
 
-    plt.plot(range(1, len(clf.losses) + 1), clf.losses, marker='o')
-    plt.xlabel('Epochs')
-    plt.ylabel('Sum-squared-error')
-    plt.show()
+    X_digits, y_digits = load_digits_data_set()
+    show_graphs = False
+    # --------- iris ----------
+    compare_algorithms(X_iris, y_iris, 1e-4, 1000, 'iris', show_graphs)
+
+    # ---------- digits ------------
+    compare_algorithms(X_digits, y_digits, 1e-5, 1000, 'digits', show_graphs)
+
+    X, y = create_dataset_better_for_adaline()
+    compare_algorithms(X, y, 1e-4, 1000, 'y=x^2', False)
+
+    X, y = create_dataset_better_for_perceptron()
+    compare_algorithms(X, y, 1e-4, 1000, 'y=2', False)
+
+    sklearn_comparison(X_digits, y_digits, 1e-4, 100)
+
+
+if __name__ == "__main__":
+    main()
