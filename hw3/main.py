@@ -11,6 +11,9 @@ from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 
 
+classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
+
+
 # Receive dict with classifiers and params with optional values, and finds the best combination of params values for
 # each classifier, it assumes each classifier has at most 2 params
 def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict):
@@ -62,7 +65,8 @@ def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict):
     return classifiers_params_dict
 
 
-def train_and_evaluate(classifiers_params_dict: dict, XY_train: pd.DataFrame, XY_val: pd.DataFrame, score_function=accuracy_score):
+def train_and_evaluate(classifiers_params_dict: dict, XY_train: pd.DataFrame, XY_val: pd.DataFrame,
+                       score_function=accuracy_score):
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
     results = dict()
@@ -87,22 +91,37 @@ def pick_best_classifier(results):
     return best_clf
 
 
-def main():
-    import time
+def createTransportationLists(clf, X_test, threshold=0.5):
+    probs = clf.predict_proba(X_test)
+    indices = np.where(probs >= threshold)
+    indices = [(indices[0][i], indices[1][i]) for i in range(len(indices[0]))]
+    indices_list = []
+    for i in range(probs.shape[1]):
+        voters = [vote[0] for vote in indices if vote[1] == i]
+        indices_list.append(voters)
+    return indices_list
 
-    start = time.time()
+
+def main():
+
     automate_model_selection = False
+    find_best_params = False
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
     XY_test = pd.read_csv('test_transformed.csv', index_col=0, header=0)
-    classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 30)),
-                                                        'min_samples_split': list(range(2, 20, 2)),
-                                                        'random_state': 2},
-                               KNeighborsClassifier: {'n_neighbors': list(range(1, 10))},
-                               SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
-                               DecisionTreeClassifier: {'min_samples_split': list(range(2, 20, 2))},
-                               GaussianNB: {}}
-    classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
+    if find_best_params:
+        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 30)),
+                                                            'min_samples_split': list(range(2, 20, 2)),
+                                                            'random_state': 2},
+                                   KNeighborsClassifier: {'n_neighbors': list(range(1, 10))},
+                                   SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
+                                   DecisionTreeClassifier: {'min_samples_split': list(range(2, 20, 2))},
+                                   GaussianNB: {}}
+        classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
+    else:
+        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': 100,
+                                                            'min_samples_split': 6,
+                                                            }}
     print(f'Classifiers best params : \n{classifiers_params_dict}')
 
     results = train_and_evaluate(classifiers_params_dict, XY_train, XY_val)  # used to pick best model manually
@@ -128,7 +147,6 @@ def main():
 
     n_voters = len(X_test)
     division_of_voters.update((key, round(value * 100 / n_voters, 3)) for key, value in division_of_voters.items())
-
     print(f'Division of voters : \n{division_of_voters}')
     bins = np.linspace(0, 12, 26)
 
@@ -137,8 +155,9 @@ def main():
     plt.legend(loc='upper right')
     plt.show()
 
-    end = time.time()
-    print(f'Time it took : {end - start}')
+    threshold = 0.6
+    indices_list = createTransportationLists(clf, X_test, threshold)
+    pd.DataFrame(indices_list).set_axis(classes).to_csv('indices_list.csv')
 
 
 if __name__ == '__main__':
