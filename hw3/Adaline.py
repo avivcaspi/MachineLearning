@@ -5,29 +5,37 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from matplotlib.colors import ListedColormap
-from sklearn.datasets import make_classification
+from sklearn.datasets import make_blobs
 
 
 class Adaline:
-    def __init__(self, lr=0.01, num_iter=100):
+    def __init__(self, lr=0.01, num_iter=100, tol=1e-3):
         self.lr = lr
         self.num_iter = num_iter
         self.losses = []
         self.train_accuracy = []
         self.weights = None
+        self.n_iter_ = num_iter
+        self.tol = tol
 
     def fit(self, X, y):
         self.weights = np.zeros(X.shape[1] + 1)
         X_with_bias = bias_trick(X)
         for i in range(self.num_iter):
-            output = X_with_bias @ self.weights
-            loss = 0.5 * ((y - output) ** 2).sum()
-            grad = X_with_bias.T @ (y - output)
-            self.weights += self.lr * grad
+            for x, y_ in zip(X_with_bias, y):
+                output = x @ self.weights
+                grad = x * (y_ - output)
+                self.weights += self.lr * grad
 
+            output = X_with_bias @ self.weights
+            loss = 0.5 * ((y - output) ** 2).mean()
             self.losses.append(loss)
             train_accuracy = evaluate_performance(self, X, y)
             self.train_accuracy.append(train_accuracy)
+            if len(self.losses) > 1:
+                if loss > self.losses[-2] - self.tol:
+                    self.n_iter_ = i
+                    break
 
     def predict(self, X):
         X = bias_trick(X)
@@ -76,26 +84,27 @@ def load_iris_data_set():
     iris = datasets.load_iris()
     X_iris = iris.data
     y_iris = iris.target
+    iris_classes = iris.target_names
 
     # Scaling
     iris_mean = np.mean(X_iris, axis=0)
     iris_std = np.std(X_iris, axis=0) + 1e-5
     X_iris = (X_iris - iris_mean) / iris_std
 
-    return X_iris, y_iris
+    return X_iris, y_iris, iris_classes
 
 
 def load_digits_data_set():
     digits = datasets.load_digits()
     X_digits = digits.data
     y_digits = digits.target
-
+    digits_classes = digits.target_names
     # Scaling
     digits_mean = np.mean(X_digits, axis=0)
     digits_std = np.std(X_digits, axis=0) + 1e-5
     X_digits = (X_digits - digits_mean) / digits_std
 
-    return X_digits, y_digits
+    return X_digits, y_digits, digits_classes
 
 
 def one_vs_all(y, true_class):
@@ -119,7 +128,8 @@ def train_and_evaluate_adaline(X, y, lr, num_iter):
         clf.fit(X_train, y_train)
 
         test_accuracy = evaluate_performance(clf, X_test, y_test)
-        results[current_class] = {'train_accuracy': clf.train_accuracy, 'test_accuracy': test_accuracy, 'losses': clf.losses}
+        results[current_class] = {'train_accuracy': clf.train_accuracy, 'test_accuracy': test_accuracy, 'losses': clf.losses,
+                                  'epochs': clf.n_iter_}
     return results
 
 
@@ -136,9 +146,11 @@ def train_and_evaluate_perceptron(X, y, lr, max_iter):
 
         clf = Perceptron(alpha=lr, max_iter=max_iter, random_state=2)
         clf.fit(X_train, y_train)
+
         train_accuracy = evaluate_performance(clf, X_train, y_train)
         test_accuracy = evaluate_performance(clf, X_test, y_test)
-        results[current_class] = {'train_accuracy': train_accuracy, 'test_accuracy': test_accuracy}
+        results[current_class] = {'train_accuracy': train_accuracy, 'test_accuracy': test_accuracy,
+                                    'epochs': clf.n_iter_}
     return results
 
 
@@ -159,14 +171,14 @@ def plot_graphs(results, dataset_name):
             plt.show()
 
 
-def compare_algorithms(X, y, lr, num_iter, dataset_name, show_graphs):
+def compare_algorithms(X, y, classes_name, lr, num_iter, dataset_name, show_graphs):
     results = train_and_evaluate_adaline(X, y, lr, num_iter)
     num_of_classes = len(set(y))
     for i in range(num_of_classes):
         if num_of_classes == 2 and i == 1:
             continue
-        print(f'{dataset_name} - Adaline type {i} vs all train accuracy = {results[i]["train_accuracy"][-1]},'
-              f' test accuracy = {results[i]["test_accuracy"]}')
+        print(f'{dataset_name} - Adaline type {classes_name[i]} vs all train accuracy = {results[i]["train_accuracy"][-1]},'
+              f' test accuracy = {results[i]["test_accuracy"]} \nepochs = {results[i]["epochs"]}')
 
     if show_graphs:
         plot_graphs(results, dataset_name)
@@ -175,8 +187,8 @@ def compare_algorithms(X, y, lr, num_iter, dataset_name, show_graphs):
     for i in range(num_of_classes):
         if num_of_classes == 2 and i == 1:
             continue
-        print(f'{dataset_name} - Perceptron type {i} vs all train accuracy = {results[i]["train_accuracy"]},'
-              f' test accuracy = {results[i]["test_accuracy"]}')
+        print(f'{dataset_name} - Perceptron type {classes_name[i]} vs all train accuracy = {results[i]["train_accuracy"]},'
+              f' test accuracy = {results[i]["test_accuracy"]} \nepochs = {results[i]["epochs"]}')
 
 
 def create_dataset_better_for_adaline():
@@ -184,10 +196,10 @@ def create_dataset_better_for_adaline():
     X = np.random.randn(1000, 2)
     y = np.zeros(X.shape[0])
     y[X[:, 1] > ((X[:, 0]) ** 2)] = 1
-    '''plt.title('Dataset separable by y=x^2')
+    plt.title('Dataset separable by y=x^2')
     plt.plot(X[y == 0, 0], X[y == 0, 1], 'r.')
     plt.plot(X[y == 1, 0], X[y == 1, 1], 'b.')
-    plt.show()'''
+    plt.show()
     return X, y
 
 
@@ -197,10 +209,10 @@ def create_dataset_better_for_perceptron():
     y = np.zeros(X.shape[0])
     X[X[:, 1] > 0, 1] += 5
     y[X[:, 1] > 0] = 1
-    '''plt.title('Dataset separable by y=2')
+    plt.title('Dataset separable by y=2')
     plt.plot(X[y == 0, 0], X[y == 0, 1], 'r.')
     plt.plot(X[y == 1, 0], X[y == 1, 1], 'b.')
-    plt.show()'''
+    plt.show()
     return X, y
 
 
@@ -224,8 +236,8 @@ def sklearn_comparison(X,y, lr, num_iter):
             for r in range(rounds):
                 X_train, X_test, y_train, y_test = \
                     train_test_split(X, y, test_size=i, random_state=rng, stratify=y)
-                y_train = one_vs_all(y_train, 1)
-                y_test = one_vs_all(y_test, 1)
+                y_train = one_vs_all(y_train, 5)
+                y_test = one_vs_all(y_test, 5)
 
                 clf.fit(X_train, y_train)
                 y_pred = clf.predict(X_test)
@@ -240,25 +252,25 @@ def sklearn_comparison(X,y, lr, num_iter):
 
 
 def main():
-    # TODO find how many epochs it takes to converge
-    # TODO change the comaprison function to be same as sklrean
-    X_iris, y_iris = load_iris_data_set()
 
-    X_digits, y_digits = load_digits_data_set()
+    X_iris, y_iris, iris_classes = load_iris_data_set()
+
+    X_digits, y_digits, digits_classes = load_digits_data_set()
+
     show_graphs = False
     # --------- iris ----------
-    compare_algorithms(X_iris, y_iris, 1e-4, 1000, 'iris', show_graphs)
+    compare_algorithms(X_iris, y_iris, iris_classes, 1e-4, 1000, 'iris', show_graphs)
 
     # ---------- digits ------------
-    compare_algorithms(X_digits, y_digits, 1e-5, 1000, 'digits', show_graphs)
+    compare_algorithms(X_digits, y_digits, digits_classes, 1e-4, 1000, 'digits', show_graphs)
 
     X, y = create_dataset_better_for_adaline()
-    compare_algorithms(X, y, 1e-4, 1000, 'y=x^2', False)
+    compare_algorithms(X, y, [-1, 1], 1e-4, 1000, 'y=x^2', False)
 
     X, y = create_dataset_better_for_perceptron()
-    compare_algorithms(X, y, 1e-4, 1000, 'y=2', False)
+    compare_algorithms(X, y, [-1, 1], 1e-4, 1000, 'y=2', False)
 
-    sklearn_comparison(X_digits, y_digits, 1e-4, 100)
+    sklearn_comparison(X_digits, y_digits, 1e-4, 1000)
 
 
 if __name__ == "__main__":

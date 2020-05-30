@@ -9,7 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import plot_confusion_matrix
 
 classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
 
@@ -110,8 +110,8 @@ def main():
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
     XY_test = pd.read_csv('test_transformed.csv', index_col=0, header=0)
     if find_best_params:
-        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 30)),
-                                                            'min_samples_split': list(range(2, 20, 2)),
+        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 40)),
+                                                            'min_samples_split': list(range(2, 20, 3)),
                                                             'random_state': 2},
                                    KNeighborsClassifier: {'n_neighbors': list(range(1, 10))},
                                    SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
@@ -119,9 +119,10 @@ def main():
                                    GaussianNB: {}}
         classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
     else:
-        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': 100,
-                                                            'min_samples_split': 6,
-                                                            }}
+        classifiers_params_dict = {RandomForestClassifier: {'n_estimators': 220, 'min_samples_split': 10},
+                                  KNeighborsClassifier: {'n_neighbors': 3},
+                                   SVC: {'kernel': 'rbf'}, DecisionTreeClassifier: {'min_samples_split': 4},
+                                  GaussianNB: {}}
     print(f'Classifiers best params : \n{classifiers_params_dict}')
 
     results = train_and_evaluate(classifiers_params_dict, XY_train, XY_val)  # used to pick best model manually
@@ -131,16 +132,22 @@ def main():
     XY_train_new = pd.concat([XY_train, XY_val])
     clf = train_best_classifier(XY_train_new, best_clf, classifiers_params_dict[best_clf])
 
+    X_train_new, y_train_new = split_label_from_data(XY_train_new)
+
     # First prediction
     X_test, y_test = split_label_from_data(XY_test)
     y_pred = clf.predict(X_test)
+    y_train_pred = clf.predict(X_train_new)
     accuracy = accuracy_score(y_test, y_pred)
+    train_accuracy = accuracy_score(y_train_new, y_train_pred)
     conf_mat = confusion_matrix(y_test, y_pred)
+    plot_confusion_matrix(clf, X_test, y_test, display_labels=classes, xticks_rotation='vertical', values_format='.3g')
+    plt.show()
 
-    print(f'Test Error : {1 - accuracy}')
+    print(f'Test Error : {1 - accuracy},  Train Error : {1 - train_accuracy}')
     print(f'Confusion Matrix : \n{conf_mat}')
 
-    division_of_voters = {party: list(y_pred).count(party) for party in set(y_pred)}
+    division_of_voters = {classes[party]: list(y_pred).count(party) for party in set(y_pred)}
     party_with_majority = max(division_of_voters, key=division_of_voters.get)
 
     print(f'Party that will win majority of votes (in relation to Test set) : {party_with_majority}')
@@ -149,10 +156,20 @@ def main():
     division_of_voters.update((key, round(value * 100 / n_voters, 3)) for key, value in division_of_voters.items())
     print(f'Division of voters : \n{division_of_voters}')
     bins = np.linspace(0, 12, 26)
-
+    y_test = [classes[y] for y in y_test]
+    y_pred = [classes[y] for y in y_pred]
     plt.hist([y_test, y_pred], bins, label=['Real votes', 'Prediction'])
-    plt.xticks(range(0, 13, 1))
+    plt.xticks(range(0, 13, 1), rotation='vertical')
     plt.legend(loc='upper right')
+    plt.title('Prediction - Real comparison')
+    plt.show()
+
+    explode = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0)
+    plt.pie(division_of_voters.values(), explode=explode, labels=division_of_voters.keys(),
+            autopct='%1.1f%%', shadow=True, startangle=0)
+    plt.title('Division of voters')
+    plt.axis('equal')
+
     plt.show()
 
     threshold = 0.6

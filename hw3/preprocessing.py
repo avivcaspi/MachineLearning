@@ -19,7 +19,7 @@ continuous_features = ['Yearly_IncomeK', 'Avg_size_per_room', 'Avg_Satisfaction_
 numerical_features = discrete_features + continuous_features
 
 if __name__ == '__main__':
-    load = True
+    load = False
     if load:
         XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
         XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
