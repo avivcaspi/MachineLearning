@@ -6,10 +6,13 @@ def automate_model_selection():
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
 
-    classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 80, 20)),
-                                                            'min_samples_split': list(range(2, 4, 2)),
-                                                            'random_state': 2},
-                                   KNeighborsClassifier: {'n_neighbors': list(range(3, 6))}}
+    classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(60, 400, 40)),
+                                                        'min_samples_split': list(range(2, 20, 3)),
+                                                        'random_state': 2},
+                               KNeighborsClassifier: {'n_neighbors': list(range(1, 10))},
+                               SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
+                               DecisionTreeClassifier: {'min_samples_split': list(range(2, 20, 2))},
+                               GaussianNB: {}}
 
     classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
 
@@ -28,4 +31,3 @@ def automate_model_selection():
     print(f'Best classifier is : {best_clf.__name__}')
     return best_clf
 
-automate_model_selection()

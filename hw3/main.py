@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 from sklearn.metrics import plot_confusion_matrix
-
+from fourth_prediction import export_graph_tree, check_factors
 classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
 
 
@@ -181,6 +181,10 @@ def main():
     indices_list = createTransportationLists(clf, X_test, threshold)
     pd.DataFrame(indices_list).set_axis(classes).to_csv('indices_list.csv')
 
+    decision_tree = DecisionTreeClassifier(min_samples_split=6)
+    decision_tree.fit(X_train_new, y_train_new)
+    export_graph_tree(decision_tree)
+    check_factors(clf, X_test)
 
 if __name__ == '__main__':
     main()
