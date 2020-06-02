@@ -16,13 +16,14 @@ classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', '
 
 # Receive dict with classifiers and params with optional values, and finds the best combination of params values for
 # each classifier, it assumes each classifier has at most 2 params
-def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict):
+def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict, scoring='accuracy'):
     X_train, y_train = split_label_from_data(XY_train)
     X_train = X_train.to_numpy()
     y_train = y_train.to_numpy()
     n_splits = 5
-
+    new_params_dict = dict()
     for classifier, params in classifiers_params_dict.items():
+        new_params_dict[classifier] = dict()
         random_state = False
         if 'random_state' in params.keys():
             random_state = params['random_state']
@@ -32,7 +33,7 @@ def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict):
             values_1 = params[param_name_1]
             param_name_2 = list(params.keys())[1]
             values_2 = params[param_name_2]
-            best_score = 0
+            best_score = -1
             best_values = None
             for value_1 in values_1:
                 for value_2 in values_2:
@@ -40,41 +41,45 @@ def find_best_params_CV(XY_train: pd.DataFrame, classifiers_params_dict: dict):
                     if random_state:
                         params_dict['random_state'] = random_state
                     clf = classifier(**params_dict)
-                    score = np.mean(cross_val_score(clf, X_train, y_train, scoring='accuracy', cv=n_splits))
+                    score = np.mean(cross_val_score(clf, X_train, y_train, scoring=scoring, cv=n_splits))
                     if score > best_score:
                         best_values = {param_name_1: value_1, param_name_2: value_2}
                         best_score = score
         elif len(params) == 1:
             param_name_1 = list(params.keys())[0]
             values_1 = params[param_name_1]
-            best_score = 0
+            best_score = -1
             best_values = None
             for value_1 in values_1:
                 params_dict = {param_name_1: value_1}
                 if random_state:
                     params_dict['random_state'] = random_state
                 clf = classifier(**params_dict)
-                score = np.mean(cross_val_score(clf, X_train, y_train, scoring='accuracy', cv=n_splits))
+                score = np.mean(cross_val_score(clf, X_train, y_train, scoring=scoring, cv=n_splits))
                 if score > best_score:
                     best_values = {param_name_1: value_1}
                     best_score = score
         else:
             continue
         for param_name in params.keys():
-            classifiers_params_dict[classifier][param_name] = best_values[param_name]
-    return classifiers_params_dict
+            new_params_dict[classifier][param_name] = best_values[param_name]
+    return new_params_dict
+
+
+def accuracy_of_clf(clf, X, y):
+    y_pred = clf.predict(X)
+    return accuracy_score(y, y_pred)
 
 
 def train_and_evaluate(classifiers_params_dict: dict, XY_train: pd.DataFrame, XY_val: pd.DataFrame,
-                       score_function=accuracy_score):
+                       score_function=accuracy_of_clf):
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
     results = dict()
     for classifier, params in classifiers_params_dict.items():
         clf = classifier(**params)
         clf.fit(X_train, y_train)
-        y_pred = clf.predict(X_val)
-        score = score_function(y_val, y_pred)
+        score = score_function(clf, X_val, y_val)
         results[classifier] = score
     return results
 
