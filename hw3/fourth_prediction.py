@@ -6,14 +6,16 @@ features = ['Yearly_IncomeK', 'Number_of_differnt_parties_voted_for', 'Political
 
 classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
 
-def export_graph_tree(decision_tree):
-    export_graphviz(decision_tree,out_file='tree.dot',feature_names=features,class_names=classes)
 
-def check_factors(clf,X_test):
-    factors = {'Political_interest_Total_Score':(0.5,add) ,'Overall_happiness_score': (2.3,mul),'Avg_size_per_room': (0.5,mul),'Weighted_education_rank': (2,add)}
-    for f,(w ,op)in factors.items():
+def export_graph_tree(decision_tree):
+    export_graphviz(decision_tree,out_file='tree.dot', feature_names=features, class_names=classes)
+
+
+def check_factors(clf, X_test):
+    factors = {'Political_interest_Total_Score': (0.5, add), 'Overall_happiness_score': (2.3, mul), 'Avg_size_per_room': (0.5, mul), 'Weighted_education_rank': (2, add)}
+    for f, (w, op) in factors.items():
         X_test_temp = X_test.copy()
-        X_test_temp.loc[:,f] = op(X_test_temp.loc[:,f] ,w)
+        X_test_temp.loc[:, f] = op(X_test_temp.loc[:, f], w)
         y_pred = clf.predict(X_test_temp)
         division_of_voters = {classes[party]: list(y_pred).count(party) for party in set(y_pred)}
         n_voters = len(X_test_temp)
@@ -23,8 +25,6 @@ def check_factors(clf,X_test):
         plt.title('Division of voters, factor: ' + f)
         plt.axis('equal')
         plt.show()
-
-
 
 
 """

@@ -109,6 +109,7 @@ def createTransportationLists(clf, X_test, threshold=0.5):
 
 def main():
 
+    # This automate is not related to the bonus, the bonus is implemented in different file
     automate_model_selection = False
     find_best_params = False
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
@@ -142,6 +143,7 @@ def main():
     # First prediction
     X_test, y_test = split_label_from_data(XY_test)
     y_pred = clf.predict(X_test)
+
     y_train_pred = clf.predict(X_train_new)
     accuracy = accuracy_score(y_test, y_pred)
     train_accuracy = accuracy_score(y_train_new, y_train_pred)
@@ -163,6 +165,7 @@ def main():
     bins = np.linspace(0, 12, 26)
     y_test = [classes[y] for y in y_test]
     y_pred = [classes[y] for y in y_pred]
+    pd.DataFrame(y_pred).to_csv('y_pred_of_test_set.csv')
     plt.hist([y_test, y_pred], bins, label=['Real votes', 'Prediction'])
     plt.xticks(range(0, 13, 1), rotation='vertical')
     plt.legend(loc='upper right')
@@ -185,6 +188,7 @@ def main():
     decision_tree.fit(X_train_new, y_train_new)
     export_graph_tree(decision_tree)
     check_factors(clf, X_test)
+
 
 if __name__ == '__main__':
     main()
