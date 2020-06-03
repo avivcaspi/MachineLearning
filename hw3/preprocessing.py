@@ -1,5 +1,5 @@
 from data_preperation import *
-from hw2.test import test_accuracy
+
 
 selected_features = ['Yearly_IncomeK', 'Number_of_differnt_parties_voted_for', 'Political_interest_Total_Score',
                      'Avg_Satisfaction_with_previous_vote', 'Avg_monthly_income_all_years', 'Most_Important_Issue',
@@ -19,7 +19,7 @@ continuous_features = ['Yearly_IncomeK', 'Avg_size_per_room', 'Avg_Satisfaction_
 numerical_features = discrete_features + continuous_features
 
 if __name__ == '__main__':
-    load = False
+    load = True
     if load:
         XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
         XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
@@ -78,6 +78,6 @@ if __name__ == '__main__':
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
     X_test, y_test = split_label_from_data(XY_test)
-    print(test_accuracy(X_train, y_train, X_val, y_val))
+
 
 
