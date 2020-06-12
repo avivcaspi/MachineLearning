@@ -5,13 +5,174 @@ from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis, LinearDiscriminantAnalysis
+from data_preperation import split_label_from_data
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import silhouette_score
+from sklearn.model_selection import KFold
 
+
+def clustering_score(estimator, X, y):
+    """
+    scoring function for clusters
+    :param estimator: classifier
+    :param X: data
+    :param y: labels
+    :return: score of the clf (higher the better)
+    """
+    score = 0
+    clusters_pred = estimator.predict(X)
+    for cluster in set(clusters_pred):
+        samples_party_in_cluster = y[clusters_pred == cluster]
+        parties_in_cluster = set(samples_party_in_cluster)
+
+        for party in parties_in_cluster:
+            total_party_samples = np.sum(y == party)
+            party_samples_in_cluster = np.sum(samples_party_in_cluster == party)
+            percentage_in_cluster = party_samples_in_cluster / total_party_samples
+            if percentage_in_cluster > 0.6:
+                score += percentage_in_cluster
+    return score
+
+
+def cluster_score(estimator, X, y):
+    score = silhouette_score(X, estimator.labels_)
+    return score
+
+
+def find_best_cluster_model_params(XY_train, classifiers_params_dict):
+    X_train, y_train = split_label_from_data(XY_train)
+    X_train = X_train.to_numpy()
+    y_train = y_train.to_numpy()
+    n_splits = 3
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=1)
+
+    new_params_dict = dict()
+    for classifier, params in classifiers_params_dict.items():
+        new_params_dict[classifier] = dict()
+        random_state = False
+        if 'random_state' in params.keys():
+            random_state = params['random_state']
+            params.pop('random_state')
+        if len(params) == 2:
+            param_name_1 = list(params.keys())[0]
+            values_1 = params[param_name_1]
+            param_name_2 = list(params.keys())[1]
+            values_2 = params[param_name_2]
+            best_score = -1
+            best_values = None
+            for value_1 in values_1:
+                for value_2 in values_2:
+                    params_dict = {param_name_1: value_1, param_name_2: value_2}
+                    if random_state:
+                        params_dict['random_state'] = random_state
+                    score = 0
+                    for k, (train_index, val_index) in enumerate(kf.split(X_train)):
+                        clf = classifier(**params_dict)
+                        clf.fit(X_train[train_index], y_train[train_index])
+                        # train_score = clustering_score(clf, X_train[train_index], y_train[train_index])
+                        score += clustering_score(clf, X_train[val_index], y_train[val_index])
+                    if score > best_score:
+                        best_values = {param_name_1: value_1, param_name_2: value_2}
+                        best_score = score
+        elif len(params) == 1:
+            param_name_1 = list(params.keys())[0]
+            values_1 = params[param_name_1]
+            best_score = -1
+            best_values = None
+            for value_1 in values_1:
+                params_dict = {param_name_1: value_1}
+                if random_state:
+                    params_dict['random_state'] = random_state
+                clf = classifier(**params_dict)
+                score = np.mean(cross_val_score(clf, X_train, y_train, scoring=cluster_score, cv=n_splits))
+                if score > best_score:
+                    best_values = {param_name_1: value_1}
+                    best_score = score
+        else:
+            continue
+        for param_name in params.keys():
+            new_params_dict[classifier][param_name] = best_values[param_name]
+    return new_params_dict
+
+
+def find_possible_coalitions(XY_train, XY_val, clusters_params):
+    X_train, y_train = split_label_from_data(XY_train)
+    X_val, y_val = split_label_from_data(XY_val)
+    n_val_sample = len(y_val)
+    possible_coalitions = set()
+    for model, params in clusters_params.items():
+        clf = model(**params)
+        clf.fit(X_train)
+        clusters_pred = clf.predict(X_val)
+        for cluster in set(clusters_pred):
+            samples_party_in_cluster = y_val[clusters_pred == cluster]
+            parties_in_cluster = set(samples_party_in_cluster)
+            coalition = []
+            coalition_size = 0
+            for party in parties_in_cluster:
+                total_party_samples = np.sum(y_val == party)
+                party_samples_in_cluster = np.sum(samples_party_in_cluster == party)
+                percentage_in_cluster = party_samples_in_cluster / total_party_samples
+                if percentage_in_cluster > 0.85:
+                    coalition.append(party)
+                    coalition_size += total_party_samples
+                    if coalition_size / n_val_sample >= 0.51:
+                        possible_coalitions.add(tuple(sorted(coalition)))
+    return possible_coalitions
+
+
+def calculate_variance(df, possible_coalitions):
+    X, y = split_label_from_data(df)
+
+    coalitions_vars = dict()
+    for coalition in possible_coalitions:
+        indices = y.isin(coalition)
+        X_coalition = X.loc[indices, :]
+        coalition_variance = X_coalition.var(axis=0)
+        coalitions_vars[coalition] = coalition_variance.sum()
+    return coalitions_vars
+
+
+def calculate_oppo_coali_dist(df, possible_coalitions):
+    X, y = split_label_from_data(df)
+
+    coalitions_dists = dict()
+    for coalition in possible_coalitions:
+        coalition_indices = y.isin(coalition).to_numpy()
+        opposition_indices = ~coalition_indices
+        X_coalition = X.loc[coalition_indices, :]
+        X_opposition = X.loc[opposition_indices, :]
+        dist = np.linalg.norm((X_coalition.mean(axis=0) - X_opposition.mean(axis=0)), 1)
+        coalitions_dists[coalition] = dist
+    return coalitions_dists
+
+
+def find_best_coalition_cluster(XY_train, XY_val):
+    classifiers_params_dict = {KMeans: {'n_clusters': list(range(2, 6)), 'max_iter': [3000]},
+                               GaussianMixture: {'n_components': list(range(2, 6)), 'max_iter': [3000]}}
+    best_clusters_params = find_best_cluster_model_params(XY_train, classifiers_params_dict)
+    print(f'Best clusters params : {best_clusters_params}')
+
+    possible_coalitions_val = find_possible_coalitions(XY_train, XY_val, best_clusters_params)
+    possible_coalitions_train = find_possible_coalitions(XY_train, XY_train, best_clusters_params)
+    possible_coalitions = possible_coalitions_train & possible_coalitions_val
+    coalitions_variance = calculate_variance(pd.concat([XY_train, XY_val]), possible_coalitions)
+    coalitions_opposition_distance = calculate_oppo_coali_dist(pd.concat([XY_train, XY_val]), possible_coalitions)
+    sorted_variance = sorted(coalitions_variance.items(), key=lambda x: x[1])
+    print(f'Sum variances of each coalition : {sorted_variance}')
+    sorted_dists = sorted(coalitions_opposition_distance.items(), key=lambda x: x[1], reverse=True)
+    print(f'Dists from opposition of each coalition : {sorted_dists}')
+    chosen_coalition = (2, 3, 4, 5, 6, 8, 9, 11, 12)
+    return chosen_coalition
 
 def main():
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
     XY_test = pd.read_csv('test_transformed.csv', index_col=0, header=0)
-    
+
+    # Finding best coalition using clustering models
+    clustring_coalition = find_best_coalition_cluster(XY_train, XY_val)
+
 
 if __name__ == '__main__':
     main()
