@@ -9,6 +9,9 @@ from data_preperation import split_label_from_data
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import silhouette_score
 from sklearn.model_selection import KFold
+from sklearn.ensemble import ExtraTreesClassifier
+
+classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
 
 
 def clustering_score(estimator, X, y):
@@ -165,6 +168,43 @@ def find_best_coalition_cluster(XY_train, XY_val):
     chosen_coalition = (2, 3, 4, 5, 6, 8, 9, 11, 12)
     return chosen_coalition
 
+
+def one_vs_all(y, true_class):
+    true_indices = y == true_class
+    y_new = pd.Series(data=-1, index=y.index)
+    y_new[true_indices] = 1
+    return y_new
+
+
+def leading_features_for_each_party(df):
+    X, y = split_label_from_data(df)
+    num_of_classes = len(set(y))
+    features = X.columns
+
+    for current_class in range(num_of_classes):
+        y_new = one_vs_all(y, current_class)
+        clf = ExtraTreesClassifier(n_estimators=50)
+        clf.fit(X, y_new)
+        features_scores = clf.feature_importances_
+
+        indices = np.argsort(features_scores)[::-1]
+
+        # Print the feature ranking
+        print("Feature ranking:")
+
+        for f in range(X.shape[1]):
+            print("%d. feature %d (%f)" % (f + 1, indices[f], features_scores[indices[f]]))
+
+        colors = ['r']*len(features)
+        colors[indices[0]] = 'b'
+        # Plot the feature importance of the forest
+        plt.figure()
+        plt.title(f"Feature importance of {classes[current_class]} vs all")
+        plt.barh(range(X.shape[1]), features_scores, orientation='horizontal',
+                color=colors, align="center", tick_label=features)
+        plt.show()
+
+
 def main():
     XY_train = pd.read_csv('train_transformed.csv', index_col=0, header=0)
     XY_val = pd.read_csv('val_transformed.csv', index_col=0, header=0)
@@ -172,6 +212,8 @@ def main():
 
     # Finding best coalition using clustering models
     clustring_coalition = find_best_coalition_cluster(XY_train, XY_val)
+
+    leading_features_for_each_party(pd.concat([XY_train, XY_val]))
 
 
 if __name__ == '__main__':
