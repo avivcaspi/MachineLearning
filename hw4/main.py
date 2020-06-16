@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis, LinearDiscriminantAnalysis
+from sklearn.discriminant_analysis import  LinearDiscriminantAnalysis
 from data_preperation import split_label_from_data
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import silhouette_score
@@ -12,8 +12,10 @@ from sklearn.model_selection import KFold
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.tree import DecisionTreeClassifier
 from fourth_prediction import *
+from graphviz import Source
 
-classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
+classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises',
+           'Violets', 'Whites', 'Yellows']
 
 
 def clustering_score(estimator, X, y):
@@ -169,7 +171,6 @@ def find_best_coalition_cluster(XY_train, XY_val):
     print(f'Dists from opposition of each coalition : {sorted_dists}')
     chosen_coalition = (2, 3, 4, 5, 6, 8, 9, 11, 12)
 
-
     return chosen_coalition
 
 
@@ -199,20 +200,20 @@ def leading_features_for_each_party(df):
         for f in range(X.shape[1]):
             print("%d. feature %d (%f)" % (f + 1, indices[f], features_scores[indices[f]]))
 
-        colors = ['r']*len(features)
+        colors = ['r'] * len(features)
         colors[indices[0]] = 'b'
         # Plot the feature importance of the forest
         plt.figure()
         plt.title(f"Feature importance of {classes[current_class]} vs all")
         plt.barh(range(X.shape[1]), features_scores, orientation='horizontal',
-                color=colors, align="center", tick_label=features)
+                 color=colors, align="center", tick_label=features)
         plt.show()
 
 
 def coalition_score(XY_train, coalition):
     coalition = tuple(coalition)
-    var = calculate_variance(XY_train,[coalition])[coalition]
-    dist = calculate_oppo_coali_dist(XY_train,[coalition])[coalition]
+    var = calculate_variance(XY_train, [coalition])[coalition]
+    dist = calculate_oppo_coali_dist(XY_train, [coalition])[coalition]
     return abs(dist)
 
 
@@ -227,36 +228,25 @@ def find_possible_coalitions_generative(XY_train, XY_test, prob_matrix):
         coalition = [label]
         coalition_size = 0
 
-        while coalition_size < 0.51:
+        while coalition_size < 0.51 or len(coalition) < len(labels):
             parties = np.zeros(len(labels))
             for party1 in coalition:
                 for party2 in labels - set(coalition):
                     parties[party2] += prob_matrix[party1][party2] + prob_matrix[party2][party1]
             coalition.append(np.argmax(parties))
             coalition_size = X_test[y_test.isin(coalition)].shape[0] / X_test.shape[0]
+            if coalition_size >= 0.51:
+                score = coalition_score(XY_train, coalition)
+                if score > best_coalition_score:
+                    best_coalition = tuple(coalition)
+                    best_coalition_score = score
 
-        score = coalition_score(XY_train, coalition)
-        if score > best_coalition_score:
-            best_coalition = tuple(coalition)
-            best_coalition_score = score
-        while len(coalition) < len(labels):
-            parties = np.zeros(len(labels))
-            for party1 in coalition:
-                for party2 in labels - set(coalition):
-                    parties[party2] += prob_matrix[party1][party2] + prob_matrix[party2][party1]
-            coalition.append(np.argmax(parties))
-
-            score = coalition_score(XY_train, coalition)
-            if score > best_coalition_score:
-                best_coalition = tuple(coalition)
-                best_coalition_score = score
-
-    return best_coalition,best_coalition_score
+    return best_coalition, best_coalition_score
 
 
-def calc_prob_matrix(XY_train,XY_trainVal, model):
+def calc_prob_matrix(XY_train, XY_trainVal, model):
     X_train, y_train = split_label_from_data(XY_train)
-    model.fit(X_train,y_train)
+    model.fit(X_train, y_train)
 
     X_train, y_train = split_label_from_data(XY_trainVal)
 
@@ -270,19 +260,18 @@ def calc_prob_matrix(XY_train,XY_trainVal, model):
     for label1 in labels:
         pred_prob = model.predict_proba(label_sample[label1])
         for label2 in labels:
-            prob_matrix[label1][label2] = sum(pred_prob[:,label2])
+            prob_matrix[label1][label2] = sum(pred_prob[:, label2])
         prob_matrix[label1] = prob_matrix[label1] / len(label_sample[label1])
 
-    plt.imshow(prob_matrix)
+    plt.matshow(prob_matrix)
     plt.colorbar()
     plt.show()
 
     return prob_matrix
 
 
-def find_best_coalition_generative(XY_train,XY_val,XY_test):
-
-    classifiers_list = [GaussianNB(), LinearDiscriminantAnalysis(), QuadraticDiscriminantAnalysis()]
+def find_best_coalition_generative(XY_train, XY_val, XY_test):
+    classifiers_list = [GaussianNB(), LinearDiscriminantAnalysis()]
 
     XY_trainVal = pd.concat([XY_train, XY_val])
 
@@ -299,15 +288,22 @@ def find_best_coalition_generative(XY_train,XY_val,XY_test):
             best_model_score = score
 
     print(f'best model: = {best_model}, with score: {best_model_score}')
-    prob_matrix = calc_prob_matrix(XY_train, XY_trainVal,best_model)
+    prob_matrix = calc_prob_matrix(XY_train, XY_trainVal, best_model)
 
-    coalition ,score = find_possible_coalitions_generative(XY_trainVal,XY_test,prob_matrix)
-
+    coalition, score = find_possible_coalitions_generative(XY_trainVal, XY_test, prob_matrix)
+    print(f'Generative model best Coalition : {sorted(list(coalition))}')
     return sorted(list(coalition))
 
 
+def find_group_factors(df, coalition):
+    X, y = split_label_from_data(df)
+    y[~y.isin(coalition)] = -1
+    y[y.isin(coalition)] = 1
+    tree = DecisionTreeClassifier(random_state=0, min_samples_split=3)
+    tree.fit(X, y)
+    export_graph_tree(tree, ['Coalition', 'Opposition'], 'Coallition-Opposition-tree')
 
-# dist  [3, 4, 5, 6, 8, 9, 11, 12]
+    # TODO Show that the changes in the features change the var to be smaller and dist larger between the groups
 
 
 def main():
@@ -316,19 +312,20 @@ def main():
     XY_test = pd.read_csv('test_transformed.csv', index_col=0, header=0)
 
     # Finding best coalition using clustering models
-    #clustring_coalition = find_best_coalition_cluster(XY_train, XY_val)
+    clustring_coalition = find_best_coalition_cluster(XY_train, XY_val)
 
     # Finding best generative using clustering models
     #generative_coalition = find_best_coalition_generative(XY_train, XY_val, XY_test)
 
     #leading_features_for_each_party(pd.concat([XY_train, XY_val]))
 
+    find_group_factors(pd.concat([XY_train, XY_val]), clustring_coalition)
+
     tree = DecisionTreeClassifier(random_state=0, min_samples_split=3)
     x_train, y_train = split_label_from_data(pd.concat([XY_train, XY_val]))
     x_test, y_test = split_label_from_data(XY_test)
     tree.fit(x_train, y_train)
-    export_graph_tree(tree)
-
+    export_graph_tree(tree, classes, 'fourth_prediction-tree')
 
 
 if __name__ == '__main__':

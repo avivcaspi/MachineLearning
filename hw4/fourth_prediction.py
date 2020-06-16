@@ -1,14 +1,18 @@
 from sklearn.tree import export_graphviz
 import matplotlib.pyplot as plt
 from operator import mul,add
-
+from graphviz import Source
 features = ['Yearly_IncomeK', 'Number_of_differnt_parties_voted_for', 'Political_interest_Total_Score', 'Avg_Satisfaction_with_previous_vote', 'Avg_monthly_income_all_years', 'Overall_happiness_score', 'Avg_size_per_room', 'Weighted_education_rank', 'Most_Important_Issue_Education', 'Most_Important_Issue_Environment', 'Most_Important_Issue_Financial', 'Most_Important_Issue_Foreign_Affairs', 'Most_Important_Issue_Healthcare', 'Most_Important_Issue_Military', 'Most_Important_Issue_Other', 'Most_Important_Issue_Social']
 
 classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises', 'Violets', 'Whites', 'Yellows']
 
 
-def export_graph_tree(decision_tree):
-    export_graphviz(decision_tree,out_file='tree.dot', feature_names=features, class_names=classes)
+def export_graph_tree(decision_tree, class_names, file_name):
+    graph = Source(export_graphviz(decision_tree, out_file=None, feature_names=features, class_names=class_names,
+                        filled=True, max_depth=3))
+    png_bytes = graph.pipe(format='png')
+    with open(file_name + '.png', 'wb') as f:
+        f.write(png_bytes)
 
 
 def check_factors(clf, X_test):
