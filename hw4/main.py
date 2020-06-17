@@ -251,6 +251,7 @@ def find_possible_coalitions_generative(XY_train, XY_test, prob_matrix):
 
     coalitions_variance = calculate_variance(XY_train, possible_coalitions)
     coalitions_opposition_distance = calculate_oppo_coali_dist(XY_train, possible_coalitions)
+
     sorted_variance = sorted(coalitions_variance.items(), key=lambda x: x[1])
     print(f'Sum variances of each coalition : {sorted_variance[:10]}')
     sorted_dists = sorted(coalitions_opposition_distance.items(), key=lambda x: x[1], reverse=True)
@@ -321,18 +322,30 @@ def find_group_factors(XY_train, XY_test, coalition):
     y_train[y_train != -1] = 1
     tree = DecisionTreeClassifier(random_state=0, min_samples_split=3)
     tree.fit(X_train, y_train)
-    export_graph_tree(tree, ['Coalition', 'Opposition'], 'Coallition-Opposition-tree')
+    export_graph_tree(tree, ['Opposition', 'Coalition'], 'Coallition-Opposition-tree')
+
     coalition_variances = X_train[y_train == 1].var(axis=0).sort_values(ascending=False)
     #print(coalition_variances)
     coalition_dists = abs(X_train[y_train == 1].mean(axis=0) - X_train[y_train == -1].mean(axis=0)).sort_values()
     #print(coalition_dists)
 
+    X_test, y_test = split_label_from_data(XY_test)
+    y_pred = tree.predict(X_test)
+    coalition_size = (y_pred == 1).sum() / len(y_pred)
+    print(f'Original coalition size is : {coalition_size}')
     coalition_variance = calculate_variance(XY_test, [coalition])[coalition]
     coalition_dist = calculate_oppo_coali_dist(XY_test, [coalition])[coalition]
     print(f'Original coalition variance : {coalition_variance}\nOriginal coalition opposition dist : {coalition_dist}')
 
     factors = {'Political_interest_Total_Score': (1.5, mul), 'Number_of_differnt_parties_voted_for': (0.5, mul)}
     XY_test_transformed = change_set_by_factors(XY_test, factors)
+    factors = {'Political_interest_Total_Score': (-1.5, add)}
+    XY_test_transformed = change_set_by_factors(XY_test_transformed, factors)
+
+    X_test_new, _ = split_label_from_data(XY_test_transformed)
+    y_pred = tree.predict(X_test_new)
+    coalition_size = (y_pred == 1).sum() / len(y_pred)
+    print(f'New coalition size is : {coalition_size}')
     coalition_variance = calculate_variance(XY_test_transformed, [coalition])[coalition]
     coalition_dist = calculate_oppo_coali_dist(XY_test_transformed, [coalition])[coalition]
     print(f'New coalition variance : {coalition_variance}\nNew coalition opposition dist : {coalition_dist}')
@@ -366,7 +379,7 @@ def main():
     generative_coalition = find_best_coalition_generative(XY_train, XY_val, XY_test_pred)
     print(f'Generative coalition is : {[classes[i] for i in generative_coalition]}')
 
-    #leading_features_for_each_party(pd.concat([XY_train, XY_val]))
+    leading_features_for_each_party(pd.concat([XY_train, XY_val]))
 
     find_group_factors(pd.concat([XY_train, XY_val]), XY_test_pred, clustring_coalition)
 
