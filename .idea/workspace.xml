@@ -30,7 +30,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/hw3/plots" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
-  <component name="RunManager" selected="Python.main (3)">
+  <component name="RunManager" selected="Python.preprocessing (1)">
     <configuration name="Adaline" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MachineLearning" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -45,28 +45,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hw3/Adaline.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main (2)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="MachineLearning" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hw3" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\aviv_\Documents\MachineLearning\hw3\preprocessing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -97,6 +75,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="MachineLearning" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hw5" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hw5/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="one_size_doesnt_fit_all" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MachineLearning" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -119,7 +119,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="preprocessing" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="preprocessing (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MachineLearning" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -127,12 +127,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hw3" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hw5" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hw3/preprocessing.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hw5/preprocessing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -143,11 +143,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.preprocessing (1)" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.main (3)" />
         <item itemvalue="Python.one_size_doesnt_fit_all" />
         <item itemvalue="Python.Adaline" />
-        <item itemvalue="Python.preprocessing" />
-        <item itemvalue="Python.main (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -169,6 +169,7 @@
       <workItem from="1590939234463" duration="14569000" />
       <workItem from="1591173397364" duration="1238000" />
       <workItem from="1591175444211" duration="902000" />
+      <workItem from="1592979854493" duration="7453000" />
     </task>
     <servers />
   </component>
@@ -196,42 +197,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="765" y="189" width="440" height="463" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1591094962366" />
-    <state width="1877" height="439" key="GridCell.Tab.0.bottom" timestamp="1591175355901">
+    <state width="1877" height="286" key="GridCell.Tab.0.bottom" timestamp="1592993405545">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="439" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1591175355901" />
-    <state width="1877" height="439" key="GridCell.Tab.0.center" timestamp="1591175355901">
+    <state width="1877" height="286" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1592993405545" />
+    <state width="1877" height="286" key="GridCell.Tab.0.center" timestamp="1592993405545">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="439" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1591175355901" />
-    <state width="1877" height="439" key="GridCell.Tab.0.left" timestamp="1591175355901">
+    <state width="1877" height="286" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1592993405545" />
+    <state width="1877" height="286" key="GridCell.Tab.0.left" timestamp="1592993405545">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="439" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1591175355901" />
-    <state width="1877" height="439" key="GridCell.Tab.0.right" timestamp="1591175355901">
+    <state width="1877" height="286" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1592993405545" />
+    <state width="1877" height="286" key="GridCell.Tab.0.right" timestamp="1592993405545">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="439" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1591175355901" />
-    <state width="1877" height="167" key="GridCell.Tab.1.bottom" timestamp="1591098000263">
+    <state width="1877" height="286" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1592993405545" />
+    <state width="1877" height="413" key="GridCell.Tab.1.bottom" timestamp="1592993091788">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="167" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1591098000263" />
-    <state width="1877" height="167" key="GridCell.Tab.1.center" timestamp="1591098000263">
+    <state width="1877" height="413" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1592993091788" />
+    <state width="1877" height="413" key="GridCell.Tab.1.center" timestamp="1592993091788">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="167" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1591098000263" />
-    <state width="1877" height="167" key="GridCell.Tab.1.left" timestamp="1591098000263">
+    <state width="1877" height="413" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1592993091788" />
+    <state width="1877" height="413" key="GridCell.Tab.1.left" timestamp="1592993091788">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="167" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1591098000263" />
-    <state width="1877" height="167" key="GridCell.Tab.1.right" timestamp="1591098000263">
+    <state width="1877" height="413" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1592993091788" />
+    <state width="1877" height="413" key="GridCell.Tab.1.right" timestamp="1592993091788">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="167" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1591098000263" />
+    <state width="1877" height="413" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1592993091788" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1591091473527">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1591091473527" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1592989317583">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1592989317583" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -261,11 +266,27 @@
           <line>118</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hw5/model_selection.py</url>
+          <line>22</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hw5/main.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hw5/preprocessing.py</url>
+          <line>32</line>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MachineLearning$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1591174003622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw3" />
+    <SUITE FILE_PATH="coverage/MachineLearning$preprocessing__1_.coverage" NAME="preprocessing (1) Coverage Results" MODIFIED="1592993405538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw5" />
     <SUITE FILE_PATH="coverage/MachineLearning$SFS.coverage" NAME="SFS Coverage Results" MODIFIED="1588755618580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw1" />
     <SUITE FILE_PATH="coverage/MachineLearning$one_size_doesnt_fit_all.coverage" NAME="one_size_doesnt_fit_all Coverage Results" MODIFIED="1591097176353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw3" />
     <SUITE FILE_PATH="coverage/MachineLearning$preprocessing.coverage" NAME="preprocessing Coverage Results" MODIFIED="1590746350824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw3" />
@@ -274,6 +295,6 @@
     <SUITE FILE_PATH="coverage/MachineLearning$Adaline.coverage" NAME="Adaline Coverage Results" MODIFIED="1590828866238" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw3" />
     <SUITE FILE_PATH="coverage/MachineLearning$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1588757952708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop/Exercise2-TheElectionChallenge-DataPreparation-16104001586095525" />
     <SUITE FILE_PATH="coverage/MachineLearning$EM__1_.coverage" NAME="EM (1) Coverage Results" MODIFIED="1588757791570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop/Exercise2-TheElectionChallenge-DataPreparation-16104001586095525" />
-    <SUITE FILE_PATH="coverage/MachineLearning$main.coverage" NAME="main Coverage Results" MODIFIED="1588757433711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw1" />
+    <SUITE FILE_PATH="coverage/MachineLearning$main.coverage" NAME="main Coverage Results" MODIFIED="1592992735232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw5" />
   </component>
 </project>
