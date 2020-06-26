@@ -10,6 +10,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 from sklearn.metrics import plot_confusion_matrix
+from sklearn.ensemble import VotingClassifier
 
 
 # Receive dict with classifiers and params with optional values, and finds the best combination of params values for
@@ -74,11 +75,20 @@ def train_and_evaluate(classifiers_params_dict: dict, XY_train: pd.DataFrame, XY
     X_train, y_train = split_label_from_data(XY_train)
     X_val, y_val = split_label_from_data(XY_val)
     results = dict()
+    clfs = []
     for classifier, params in classifiers_params_dict.items():
         clf = classifier(**params)
+        clfs.append((clf.__class__.__name__, clf))
         clf.fit(X_train, y_train)
         score = score_function(clf, X_val, y_val)
         results[classifier] = score
+
+    hardVoting = VotingClassifier(estimators=clfs, voting='hard')
+    softVoting = VotingClassifier(estimators=clfs, voting='soft')
+    for clf in [hardVoting, softVoting]:
+        clf.fit(X_train, y_train)
+        score = score_function(clf, X_val, y_val)
+        results[str(clf.__class__.__name__ + '.' + clf.voting)] = score
     return results
 
 
