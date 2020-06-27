@@ -20,17 +20,17 @@ def main():
         classifiers_params_dict = {RandomForestClassifier: {'n_estimators': list(range(100, 250, 40)),
                                                             'min_samples_split': list(range(2, 11, 4)),
                                                             'random_state': 2},
-                                   SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid']},
+                                   SVC: {'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'probability': True},
                                    MLPClassifier: {'hidden_layer_sizes': [(100, 50,), (50, 100,), (100, 200,)],
-                                                   'max_iter': [1000]}}
+                                                   'activation': ['identity', 'logistic', 'tanh', 'relu']}}
         classifiers_params_dict = find_best_params_CV(XY_train, classifiers_params_dict)
     else:
         classifiers_params_dict = {RandomForestClassifier: {'n_estimators': 220,
                                                             'min_samples_split': 6,
                                                             'random_state': 2},
                                    SVC: {'kernel': 'rbf', 'probability': True},
-                                   MLPClassifier: {'hidden_layer_sizes': (150, 10,),
-                                                   'max_iter': 1000}}
+                                   MLPClassifier: {'hidden_layer_sizes': (50, 100,),
+                                                   'max_iter': 1000, 'learning_rate': 'adaptive', 'activation': 'tanh'}}
 
     print(f'Classifiers best params : \n{classifiers_params_dict}')
 
@@ -41,7 +41,7 @@ def main():
     else:
         clf1 = RandomForestClassifier(n_estimators=220, min_samples_split=6, random_state=2)
         clf2 = SVC(kernel='rbf', probability=True)
-        clf3 = MLPClassifier(hidden_layer_sizes=(150, 10,), max_iter=1000)
+        clf3 = MLPClassifier(hidden_layer_sizes=(50, 100,), max_iter=1000, learning_rate='adaptive', activation='tanh')
         best_clf = VotingClassifier
         classifiers_params_dict[VotingClassifier] = {'estimators': [('rf', clf1), ('svm', clf2), ('mlp', clf3)], 'voting': 'soft'}
     XY_train_new = pd.concat([XY_train, XY_val])

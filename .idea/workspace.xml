@@ -27,7 +27,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/hw3/plots" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/hw5/plots" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager" selected="Python.main">
@@ -169,7 +169,7 @@
       <workItem from="1590939234463" duration="14569000" />
       <workItem from="1591173397364" duration="1238000" />
       <workItem from="1591175444211" duration="902000" />
-      <workItem from="1592979854493" duration="15155000" />
+      <workItem from="1592979854493" duration="19996000" />
     </task>
     <servers />
   </component>
@@ -193,42 +193,42 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="791" y="379" width="787" height="514" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1591091336424" />
-    <state x="765" y="189" width="440" height="463" key="FileChooserDialogImpl" timestamp="1591094962366">
+    <state x="765" y="189" width="440" height="463" key="FileChooserDialogImpl" timestamp="1593256786720">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="189" width="440" height="463" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1591094962366" />
-    <state width="1877" height="406" key="GridCell.Tab.0.bottom" timestamp="1593158577914">
+    <state x="765" y="189" width="440" height="463" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1593256786720" />
+    <state width="1877" height="345" key="GridCell.Tab.0.bottom" timestamp="1593256867733">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.0.center" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1593256867733" />
+    <state width="1877" height="345" key="GridCell.Tab.0.center" timestamp="1593256867733">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.0.left" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1593256867733" />
+    <state width="1877" height="345" key="GridCell.Tab.0.left" timestamp="1593256867733">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.0.right" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1593256867733" />
+    <state width="1877" height="345" key="GridCell.Tab.0.right" timestamp="1593256867733">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.1.bottom" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1593256867733" />
+    <state width="1877" height="345" key="GridCell.Tab.1.bottom" timestamp="1593256869765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.1.center" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1593256869765" />
+    <state width="1877" height="345" key="GridCell.Tab.1.center" timestamp="1593256869765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.1.left" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1593256869765" />
+    <state width="1877" height="345" key="GridCell.Tab.1.left" timestamp="1593256869765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
-    <state width="1877" height="406" key="GridCell.Tab.1.right" timestamp="1593158577914">
+    <state width="1877" height="345" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1593256869765" />
+    <state width="1877" height="345" key="GridCell.Tab.1.right" timestamp="1593256869765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="406" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1593158577914" />
+    <state width="1877" height="345" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1593256869765" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1591091473527">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -267,29 +267,19 @@
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hw5/model_selection.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/hw5/preprocessing.py</url>
           <line>32</line>
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hw5/main.py</url>
-          <line>100</line>
-          <option name="timeStamp" value="77" />
+          <url>file://$PROJECT_DIR$/hw5/coalition_selection.py</url>
+          <line>178</line>
+          <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hw5/main.py</url>
-          <line>90</line>
-          <option name="timeStamp" value="81" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/hw5/main.py</url>
-          <line>9</line>
-          <option name="timeStamp" value="82" />
+          <url>file://$PROJECT_DIR$/hw5/coalition_selection.py</url>
+          <line>157</line>
+          <option name="timeStamp" value="86" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -305,6 +295,6 @@
     <SUITE FILE_PATH="coverage/MachineLearning$Adaline.coverage" NAME="Adaline Coverage Results" MODIFIED="1590828866238" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw3" />
     <SUITE FILE_PATH="coverage/MachineLearning$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1588757952708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop/Exercise2-TheElectionChallenge-DataPreparation-16104001586095525" />
     <SUITE FILE_PATH="coverage/MachineLearning$EM__1_.coverage" NAME="EM (1) Coverage Results" MODIFIED="1588757791570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop/Exercise2-TheElectionChallenge-DataPreparation-16104001586095525" />
-    <SUITE FILE_PATH="coverage/MachineLearning$main.coverage" NAME="main Coverage Results" MODIFIED="1593158774081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw5" />
+    <SUITE FILE_PATH="coverage/MachineLearning$main.coverage" NAME="main Coverage Results" MODIFIED="1593256867650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hw5" />
   </component>
 </project>
