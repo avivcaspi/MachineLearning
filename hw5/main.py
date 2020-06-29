@@ -2,7 +2,8 @@ from data_preperation import *
 from model_selection import *
 from coalition_selection import *
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier
+from sklearn.svm import SVC
 import matplotlib.colors as mcolors
 
 

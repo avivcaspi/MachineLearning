@@ -1,15 +1,8 @@
 import pandas as pd
 import numpy as np
 from data_preperation import split_label_from_data
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
-import matplotlib.pyplot as plt
-from sklearn.metrics import plot_confusion_matrix
 from sklearn.ensemble import VotingClassifier
 
 

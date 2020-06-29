@@ -5,12 +5,10 @@ from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import  LinearDiscriminantAnalysis
-from data_preperation import split_label_from_data, insert_label_to_data
+from data_preperation import split_label_from_data
 from sklearn.model_selection import cross_val_score
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import KFold
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.tree import DecisionTreeClassifier
+
 
 classes = ['Blues', 'Browns', 'Greens', 'Greys', 'Khakis', 'Oranges', 'Pinks', 'Purples', 'Reds', 'Turquoises',
            'Violets', 'Whites', 'Yellows']

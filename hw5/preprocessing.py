@@ -1,5 +1,5 @@
 from data_preperation import *
-import matplotlib.pyplot as plt
+
 
 selected_features = ['Yearly_IncomeK', 'Number_of_differnt_parties_voted_for', 'Political_interest_Total_Score',
                      'Avg_Satisfaction_with_previous_vote', 'Avg_monthly_income_all_years', 'Most_Important_Issue',
